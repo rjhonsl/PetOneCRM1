@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.santeh.petone.crm.Utils.Helper;
+
 
 public class DB_Query_AquaCRM {
 
@@ -48,11 +50,36 @@ public class DB_Query_AquaCRM {
 		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_CLIENT_NAME, clientName);
 		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_CUSTCODE, custCode);
 		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_C_NUMBER, contactNumber);
-		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_dateAdded, dateAdded);
+		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_dateAdded, System.currentTimeMillis());
 		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_addedby, addedBy);
 		values.put(DB_Helper_AquaCRM.CL_CLIENTINFO_IsPosted, 0);
 
 		return  db.insert(DB_Helper_AquaCRM.TBL_CLIENTINFO, null, values);
+	}
+
+	public long insertClientUpdates(String remarks, String clientId){
+
+		ContentValues values = new ContentValues();
+		values.put(DB_Helper_AquaCRM.CL_UPDATES_CLIENTID, clientId);
+		values.put(DB_Helper_AquaCRM.CL_UPDATES_REMARKS, remarks);
+		values.put(DB_Helper_AquaCRM.CL_UPDATES_DATEADDED, System.currentTimeMillis());
+		values.put(DB_Helper_AquaCRM.CL_UPDATES_isposted, 0);
+
+		return  db.insert(DB_Helper_AquaCRM.TBL_UPDATES, null, values);
+	}
+
+	public long insertAdminAccount(Context context){
+		ContentValues values = new ContentValues();
+		values.put(DB_Helper_AquaCRM.CL_USERS_userlvl, 0);
+		values.put(DB_Helper_AquaCRM.CL_USERS_username, "jhonar10");
+		values.put(DB_Helper_AquaCRM.CL_USERS_password, "10");
+		values.put(DB_Helper_AquaCRM.CL_USERS_firstName, "Jhonar");
+		values.put(DB_Helper_AquaCRM.CL_USERS_lastName, "Lajom");
+		values.put(DB_Helper_AquaCRM.CL_USERS_deviceid, Helper.common.getMacAddress(context));
+		values.put(DB_Helper_AquaCRM.CL_USERS_dateAdded, System.currentTimeMillis());
+		values.put(DB_Helper_AquaCRM.CL_USERS_isactive, 1);
+
+		return  db.insert(DB_Helper_AquaCRM.TBL_USERS, null, values);
 	}
 
 
@@ -101,6 +128,18 @@ public class DB_Query_AquaCRM {
 	}
 
 
+	public Cursor getClientByClientID(String clientID){
+		String query = "SELECT * FROM "+DB_Helper_AquaCRM.TBL_CLIENTINFO+" WHERE "
+				+ DB_Helper_AquaCRM.CL_CLIENTINFO_ID + " = ? "
+				;
+
+
+		String[] params = new String[] {clientID};
+		return db.rawQuery(query, params);
+	}
+
+
+
 	public Cursor getUserIdByLogin(String username, String password, String deviceid){
 		String query = "SELECT * FROM "+DB_Helper_AquaCRM.TBL_USERS+" WHERE "
 				+ DB_Helper_AquaCRM.CL_USERS_username + " = ? AND "
@@ -110,6 +149,19 @@ public class DB_Query_AquaCRM {
 		String[] params = new String[] {username, password, deviceid };
 		return db.rawQuery(query, params);
 	}
+
+
+	public Cursor getClientUpdateByID(String clientID){
+		String query = "SELECT * FROM "+DB_Helper_AquaCRM.TBL_UPDATES+" WHERE "
+				+ DB_Helper_AquaCRM.CL_UPDATES_CLIENTID + " = ? "
+//				+ "ORDER BY " + DB_Helper_AquaCRM.CL_UPDATES_ID + " DESC"
+				;
+
+
+		String[] params = new String[] {clientID};
+		return db.rawQuery(query, params);
+	}
+
 
 
 	/********************************************

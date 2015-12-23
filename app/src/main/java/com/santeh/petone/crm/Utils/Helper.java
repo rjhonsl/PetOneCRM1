@@ -139,7 +139,6 @@ public class Helper {
 
     public static class timeConvert{
 
-
         public static String longtoDateTime_DB_Format(long dateInMillis){
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Calendar calendar = Calendar.getInstance();
@@ -147,6 +146,21 @@ public class Helper {
             return formatter.format(calendar.getTime());
         }
 
+
+        public static String longtoDateTime_StringFormat(long dateInMillis){
+            SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm aa");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateInMillis);
+            return formatter.format(calendar.getTime());
+        }
+
+
+        public static String longtoDate_StringFormat(long dateInMillis){
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateInMillis);
+            return formatter.format(calendar.getTime());
+        }
 
     }
 

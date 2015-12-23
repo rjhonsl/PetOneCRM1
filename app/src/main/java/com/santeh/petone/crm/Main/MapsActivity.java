@@ -80,12 +80,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_closeAddMarker.setVisibility(View.GONE);
 
         final CameraUpdate zoom = CameraUpdateFactory.zoomTo(6);
-        fusedLocation.connectToApiClient();
+        fusedLocation.disconnectFromApiClient();
+
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
+                    fusedLocation.connectToApiClient();
+
+
                     LatLng latLng = fusedLocation.getLastKnowLocation();
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -97,7 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Helper.map.moveCameraAnimate(googleMap, center, 6);
                 }
             }
-        }, 200);
+        }, 280);
 
 
         btn_closeAddMarker.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                String[] splitted = marker.getSnippet().split("#*#");
+                String[] splitted = marker.getSnippet().split("~");
                 String id = splitted[0];
 
                 Intent intent = new Intent(MapsActivity.this, Activity_ClientUpdates.class);

@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.santeh.petone.crm.Obj.CustInfoObject;
+import com.santeh.petone.crm.R;
+import com.santeh.petone.crm.Utils.Helper;
 
 import java.util.List;
 
@@ -18,24 +20,23 @@ public class Adapter_ClientUpdates extends ArrayAdapter<CustInfoObject> {
 
 	Context context;
 	LayoutInflater inflater;
-	List<CustInfoObject> ItemList;
+	List<CustInfoObject> itemList;
 	int positions = 0;
-	String tag = "CreateNew ArrayAdapter";
+	String tag = "Create New ArrayAdapter";
 	private SparseBooleanArray mSelectedItemsIds;
 
 	public Adapter_ClientUpdates(Context context, int resourceId, List<CustInfoObject> items) {
 		super(context, resourceId, items);
 		this.context = context;
-		this.ItemList = items;
+		this.itemList = items;
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		Log.d(tag, "Adapter Context");
 		mSelectedItemsIds = new SparseBooleanArray();
 	}
 
 	private class ViewHolder {
-		TextView fullName;
-		TextView areaAssigned;
-		TextView position;
+		TextView dateUpdated;
+		TextView remarks;
 		TextView initials;
 	}
 
@@ -49,12 +50,11 @@ public class Adapter_ClientUpdates extends ArrayAdapter<CustInfoObject> {
 			Log.d(tag, "if null");
 			holder = new ViewHolder();
 
-//			view = inflater.inflate(R.layout.item_lv_viewusers, null);
-//
-//			holder.areaAssigned = (TextView) view.findViewById(R.id.item_user_areaAssigned);
-//			holder.position = (TextView) view.findViewById(R.id.item_user_position);
-//			holder.fullName = (TextView) view.findViewById(R.id.item_user_fullname);
-//			holder.initials = (TextView) view.findViewById(R.id.item_user_initials);
+			view = inflater.inflate(R.layout.item_lv_clientupdates, null);
+
+			holder.remarks = (TextView) view.findViewById(R.id.item_user_position);
+			holder.dateUpdated = (TextView) view.findViewById(R.id.item_clientupdates_date);
+			holder.initials = (TextView) view.findViewById(R.id.item_user_initials);
 			view.setTag(holder);
 		}
 		else
@@ -63,35 +63,13 @@ public class Adapter_ClientUpdates extends ArrayAdapter<CustInfoObject> {
 			holder = (ViewHolder) view.getTag();
 		}
 
-		String userPosition="";
-//		if (ItemList.get(position).getUserlevel() == 2 ) {
-//			userPosition = "Area Manager";
-//			holder.initials.setBackground(context.getResources().getDrawable(R.drawable.bg_violet_oval));
-//		}else if (ItemList.get(position).getUserlevel() == 3 ) {
-//			userPosition = "Area Supervisor";
-//			holder.initials.setBackground(context.getResources().getDrawable(R.drawable.bg_orange_oval));
-//		}else if (ItemList.get(position).getUserlevel() == 4 ) {
-//			userPosition = "TSR/Technician";
-//			holder.initials.setBackground(context.getResources().getDrawable(R.drawable.bg_green1_oval));
-//		}else if(ItemList.get(position).getUserlevel() == 0 ){
-//			userPosition = "Admin";
-//			holder.initials.setBackground(context.getResources().getDrawable(R.drawable.bg_amber_oval));
-//		}else if(ItemList.get(position).getUserlevel() == 1 ){
-//			userPosition = "Top Management";
-//			holder.initials.setBackground(context.getResources().getDrawable(R.drawable.bg_skyblue_oval));
-//		}
 
-		//admin dark blue
-		//top = light blue
-		//area manager violet
-		//supervisor oragne
-		//tsr green
+		String dateString = Helper.timeConvert.longtoDate_StringFormat(Long.parseLong(itemList.get(position).getDateAddedToDB()));
+		String remarks = itemList.get(position).getRemarks()+"";
 
-//		 Capture position and set to the TextViews
-		holder.position.setText(userPosition);//reversed this//
-		holder.areaAssigned.setText("Assigned Area: N/A");//reversed this//
-		holder.fullName.setText(ItemList.get(position).getFirstname() + " " + ItemList.get(position).getLastname());
-		holder.initials.setText(ItemList.get(position).getFirstname().substring(0,1) + ItemList.get(position).getLastname().substring(0,1));
+		holder.remarks.setText(remarks);//reversed this//
+		holder.dateUpdated.setText(dateString);
+		holder.initials.setText(position+1+"");
 
 
 		return view;
@@ -99,7 +77,7 @@ public class Adapter_ClientUpdates extends ArrayAdapter<CustInfoObject> {
 
 	@Override
 	public void remove(CustInfoObject object) {
-		ItemList.remove(object);
+		itemList.remove(object);
 		notifyDataSetChanged();
 	}
 

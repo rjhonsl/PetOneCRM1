@@ -72,9 +72,15 @@ public class Activity_LoginScreen extends Activity{
         db = new DB_Query_AquaCRM(this);
         db.open();
 
+
+
         fusedLocation = new FusedLocation(context, activity);
         fusedLocation.buildGoogleApiClient(context);
 
+        if (db.getUser_Count() < 1) {
+            long a =  db.insertAdminAccount(context);
+            Helper.common.toastLong(activity, "users: " + a );
+        }
 
 
         try {

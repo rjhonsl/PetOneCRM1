@@ -49,12 +49,15 @@
 
 
         <LinearLayout
-            android:padding="10dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <ListView
-                android:id="@+id/listview_userMonitoring"
+                android:id="@+id/listview_clientUpdates"
                 android:animateLayoutChanges="true"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
