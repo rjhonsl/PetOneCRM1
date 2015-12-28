@@ -19,7 +19,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="13dp"
-            android:background="@color/deepteal_400"
+            android:background="@color/teal_400"
             android:textSize="18sp"
             android:textColor="#FFFFFF"
             android:text="SAMPLE TITLE"

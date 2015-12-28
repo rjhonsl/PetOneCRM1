@@ -21,7 +21,7 @@
             android:padding="10dp"
             android:textColor="#FFFFFF"
             android:text="Sample Title"
-            android:background="@color/deepteal_500"
+            android:background="@color/teal_500"
             android:drawableRight="@drawable/ic_info_white_24dp"
             android:id="@+id/dialog_yesno_title"
             />

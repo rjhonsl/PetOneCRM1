@@ -19,7 +19,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="13dp"
-            android:background="@color/deepteal_400"
+            android:background="@color/teal_400"
             android:textSize="18sp"
             android:textColor="#FFFFFF"
             android:text="SAMPLE TITLE"
@@ -46,7 +46,7 @@
             android:text="Select an the info you want to put on this location. \n\nLat. 14.12521\nLng.120.125412"/>
 
         <View android:layout_width="fill_parent" android:layout_height="1dp"
-            android:background="@color/deepteal_300"/>
+            android:background="@color/teal_300"/>
         <ListView
             android:id="@+id/dialog_list_listview"
             android:layout_width="match_parent"
@@ -55,7 +55,7 @@
             android:textColor="@color/material_blue_grey_800"
             />
         <View android:layout_width="fill_parent" android:layout_height="1dp"
-              android:background="@color/deepteal_300"/>
+              android:background="@color/teal_300"/>
 
     </LinearLayout>
 

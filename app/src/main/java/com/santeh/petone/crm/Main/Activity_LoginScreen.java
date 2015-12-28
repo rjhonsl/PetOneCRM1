@@ -269,8 +269,8 @@ public class Activity_LoginScreen extends Activity{
 
         chkshowpasword = (CheckBox) findViewById(R.id.chk_loginscreen_showpassword);
 
-        txtusername.getBackground().setColorFilter(getResources().getColor(R.color.yellow), PorterDuff.Mode.SRC_IN);
-        txtpassword.getBackground().setColorFilter(getResources().getColor(R.color.yellow), PorterDuff.Mode.SRC_IN);
+        txtusername.getBackground().setColorFilter(getResources().getColor(R.color.yellow_300), PorterDuff.Mode.SRC_IN);
+        txtpassword.getBackground().setColorFilter(getResources().getColor(R.color.yellow_300), PorterDuff.Mode.SRC_IN);
 
         txtusername.setText("jhonar10");
         txtpassword.setText("10");

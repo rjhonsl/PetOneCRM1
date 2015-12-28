@@ -20,8 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -148,11 +150,19 @@ public class Helper {
 
 
         public static String longtoDateTime_StringFormat(long dateInMillis){
-            SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm aa");
+            SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy hh:mm aa");
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(dateInMillis);
             return formatter.format(calendar.getTime());
         }
+
+        public static String longtoTime_StringFormat(long dateInMillis){
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm aa");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateInMillis);
+            return formatter.format(calendar.getTime());
+        }
+
 
 
         public static String longtoDate_StringFormat(long dateInMillis){
@@ -295,6 +305,22 @@ public class Helper {
             return d;
         }
 
+        public static Dialog dialogList(Activity activity, String[] options, String title){
+            final Dialog d = new Dialog(activity);//
+            d.requestWindowFeature(Window.FEATURE_NO_TITLE); //notitle
+            d.setContentView(R.layout.dialog_list);//Set the xml view of the dialog
+
+            ListView listview = (ListView) d.findViewById(R.id.dialog_list_listview);
+            ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(activity, R.layout.select_dialog_item_material, options); //selected item will look like a spinner set from XML
+            listViewAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            listview.setAdapter(listViewAdapter);
+
+            TextView txtTitle = (TextView) d.findViewById(R.id.dialog_okonly_title);
+            txtTitle.setText(title);
+            d.show();
+            return d;
+        }
+
 
         public static void toastShort(Activity context, String msg){
             LayoutInflater inflater = context.getLayoutInflater();
@@ -358,7 +384,7 @@ public class Helper {
                 }
             });
             txtprompt.setText(prompt);
-            txttitle.setText(title);
+            txttitle.setText(title+"   ");
             txtok.setText(button);
             d.show();
             return d;
