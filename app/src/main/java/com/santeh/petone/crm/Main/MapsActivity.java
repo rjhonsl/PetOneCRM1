@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -22,11 +23,16 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.santeh.petone.crm.Adapter.Adapter_MapsActivity;
 import com.santeh.petone.crm.DBase.DB_Helper_AquaCRM;
 import com.santeh.petone.crm.DBase.DB_Query_AquaCRM;
+import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.FusedLocation;
 import com.santeh.petone.crm.Utils.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -35,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Activity activity;
     Context context;
 
+    TextView txtposition, txtName;
     ImageButton btn_AddMarker, btn_closeAddMarker;
 
     CircleOptions circleOptions_addLocation;
@@ -42,7 +49,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     DB_Helper_AquaCRM dbHelper;
     DB_Query_AquaCRM db;
+    ListView lvcustomers;
+    List<CustInfoObject> customerList;
     public static int requestCODE_addMarker = 1;
+    Adapter_MapsActivity adapterMapsActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +74,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         db = new DB_Query_AquaCRM(this);
         db.open();
 
+        List<CustInfoObject> customerList;
+
     }
 
 
@@ -77,7 +89,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         btn_AddMarker = (ImageButton) findViewById(R.id.btnAddMarker);
         btn_closeAddMarker = (ImageButton) findViewById(R.id.btnCloseAddMarker);
+        txtName = (TextView) findViewById(R.id.txt_name);
+        txtposition = (TextView) findViewById(R.id.txt_position);
         btn_closeAddMarker.setVisibility(View.GONE);
+        lvcustomers = (ListView) findViewById(R.id.lv_map_customers);
+
+
+        txtName.setText(Helper.variables.getGlobalVar_currentUserFirstname(activity) + " " + Helper.variables.getGlobalVar_currentUserLastname(activity));
+        String position = "";
+        if (Helper.variables.getGlobalVar_currentLevel(activity) == 0) {
+            position = "Admin";
+        }else  if (Helper.variables.getGlobalVar_currentLevel(activity) == 1) {
+            position = "Top Management";
+        }else  if (Helper.variables.getGlobalVar_currentLevel(activity) == 2) {
+            position = "Manager";
+        }else  if (Helper.variables.getGlobalVar_currentLevel(activity) == 3) {
+            position = "Supervisor";
+        }else  if (Helper.variables.getGlobalVar_currentLevel(activity) == 4) {
+            position = "TSR";
+        }
+        txtposition.setText(position);
 
         final CameraUpdate zoom = CameraUpdateFactory.zoomTo(6);
         fusedLocation.disconnectFromApiClient();
@@ -188,8 +219,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void showAllMarker(GoogleMap googleMap) {
         db.open();
         Cursor cur = db.getClientInfoByUserID(Helper.variables.getGlobalVar_currentUserID(activity)+"");
-        if (cur.getCount() > 0 ){
-            while (cur.moveToNext()){
+        if (cur.getCount() > 0 ) {
+            customerList = new ArrayList<>();
+            while (cur.moveToNext()) {
                 LatLng latLng = new LatLng(
                         Double.parseDouble(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_LAT))),
                         Double.parseDouble(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_LNG))));
@@ -200,8 +232,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 googleMap.setInfoWindowAdapter(new CustomerInfoWindow());
                 Helper.map.addMarker(googleMap, latLng, R.drawable.ic_pet24, clientName, address, id);
+
+
+                CustInfoObject singleCustomer = new CustInfoObject();
+                singleCustomer.setId(Integer.parseInt(id));
+                singleCustomer.setLatLng(latLng);
+                singleCustomer.setCustomerName(clientName);
+
+                customerList.add(singleCustomer);
             }
+
+            if (adapterMapsActivity != null) {
+                adapterMapsActivity.clear();
+            }
+
+            showClientUpdates();
         }
+
+
     }
 
     @Override
@@ -281,6 +329,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public View getInfoContents(Marker marker) {
             return null;
         }
+    }
+
+    private void showClientUpdates(){
+        adapterMapsActivity =  new Adapter_MapsActivity(context, R.layout.item_lv_mapsactivity, customerList);
+        lvcustomers.setAdapter(adapterMapsActivity);
     }
 
     private void exitApp() {

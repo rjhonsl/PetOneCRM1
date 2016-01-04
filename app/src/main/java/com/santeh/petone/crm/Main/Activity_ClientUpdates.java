@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,16 +30,15 @@ import java.util.List;
  * Created by rjhonsl on 12/21/2015.
  */
 public class Activity_ClientUpdates extends FragmentActivity {
-
-    ImageButton btnAddUpdate, btnClientDetails, btnTitleLeft, btnTitleRight;
     Activity activity;
     Context context;
 
     DB_Query_AquaCRM db;
     String clientID;
 
+    LinearLayout llEmptyUpdates, llListviewHOlder;
+    ImageButton btnAddUpdate, btnClientDetails, btnTitleLeft, btnTitleRight;
     TextView txtTitle;
-
     ListView lv_clientUpdates;
     Adapter_ClientUpdates adapterClientUpdates;
     List<CustInfoObject> updateList;
@@ -71,6 +71,8 @@ public class Activity_ClientUpdates extends FragmentActivity {
         }
 
 
+        llEmptyUpdates = (LinearLayout) findViewById(R.id.ll_empty_update);
+        llListviewHOlder = (LinearLayout) findViewById(R.id.ll_listviewHolder);
         btnAddUpdate = (ImageButton) findViewById(R.id.btn_addupdate);
         btnTitleLeft = (ImageButton) findViewById(R.id.btn_title_left);
         btnTitleRight = (ImageButton) findViewById(R.id.btn_title_right);
@@ -81,6 +83,8 @@ public class Activity_ClientUpdates extends FragmentActivity {
         txtTitle.setText(strClientName);
 
         getClientUpdates();
+
+        showEmptyUpdateImage();
 
 
         btnTitleRight.setOnClickListener(new View.OnClickListener() {
@@ -247,6 +251,19 @@ public class Activity_ClientUpdates extends FragmentActivity {
         });
     }
 
+    private void showEmptyUpdateImage() {
+        Cursor cur = db.getClientByClientID(clientID);
+        int count = cur.getCount();
+        if (count > 0) {
+            llEmptyUpdates.setVisibility(View.GONE);
+            llListviewHOlder.setVisibility(View.VISIBLE);
+        }else{
+            llEmptyUpdates.setVisibility(View.VISIBLE);
+            llListviewHOlder.setVisibility(View.GONE);
+        }
+        Helper.common.toastShort(activity, count+"");
+    }
+
     private void getClientUpdates() {
         updateList = new ArrayList<>();
         Cursor cur = db.getClientUpdateByID(clientID);
@@ -267,12 +284,14 @@ public class Activity_ClientUpdates extends FragmentActivity {
     private void showClientUpdates(){
         adapterClientUpdates =  new Adapter_ClientUpdates(context, R.layout.item_lv_clientupdates, updateList);
         lv_clientUpdates.setAdapter(adapterClientUpdates);
+//        Helper.common.toastShort(activity, updateList.size()+"");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         db.open();
+//        showEmptyUpdateImage();
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.santeh.petone.crm.Obj;
 
 import android.graphics.Bitmap;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class CustInfoObject {
 	
 	private int id;
@@ -49,6 +51,7 @@ public class CustInfoObject {
 	private String spouse_lname;
 	private String spouse_birthday;
 	private String civilStatus;
+	private String customerName;
 
 	private String accountlevelDescription;
 	private int userlevel;
@@ -107,6 +110,8 @@ public class CustInfoObject {
 	private String actionDone;
 	private String recommendedConsumption;
 	private String actualConsumption;
+	private LatLng latLng
+			;
 
 	private double weeklyConsumptionInGrams;
 	private String survivalrate_per_pond;
@@ -832,5 +837,21 @@ public class CustInfoObject {
 
 	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public LatLng getLatLng() {
+		return latLng;
+	}
+
+	public void setLatLng(LatLng latLng) {
+		this.latLng = latLng;
 	}
 }

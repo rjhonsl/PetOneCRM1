@@ -6,4 +6,25 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="clientUpdates">Updates</string>
+
+
+
+    <string-array name="filler_array">
+        <item>Customer 1</item>
+        <item>Customer 2</item>
+        <item>Customer 3</item>
+        <item>Customer 4</item>
+        <item>Customer 5</item>
+        <item>Customer 6</item>
+        <item>Customer 7</item>
+        <item>Customer 8</item>
+        <item>Customer 9</item>
+        <item>Customer 10</item>
+        <item>Customer 11</item>
+        <item>Customer 12</item>
+        <item>Customer 13</item>
+        <item>Customer 14</item>
+        <item>Customer 15</item>
+        <item>Customer 16</item>
+    </string-array>
 </resources>
