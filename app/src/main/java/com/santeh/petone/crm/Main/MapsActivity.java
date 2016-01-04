@@ -8,7 +8,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -41,8 +44,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Activity activity;
     Context context;
 
-    TextView txtposition, txtName;
+    TextView txtposition, txtName, txtMaptype, txtExit;
     ImageButton btn_AddMarker, btn_closeAddMarker;
+    DrawerLayout drawerLayout;
 
     CircleOptions circleOptions_addLocation;
     Circle mapcircle;
@@ -91,10 +95,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_closeAddMarker = (ImageButton) findViewById(R.id.btnCloseAddMarker);
         txtName = (TextView) findViewById(R.id.txt_name);
         txtposition = (TextView) findViewById(R.id.txt_position);
+        txtMaptype = (TextView) findViewById(R.id.txt_maptype);
+        txtExit = (TextView) findViewById(R.id.txt_exit);
         btn_closeAddMarker.setVisibility(View.GONE);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         lvcustomers = (ListView) findViewById(R.id.lv_map_customers);
 
 
+        txtExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exitApp();
+            }
+        });
+
+        txtMaptype.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                closeDrawer();
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        String[] maptypes = {"Normal", "Satellite", "Terrain", "Hybrid"};
+                        final Dialog dd = Helper.common.dialogThemedList(activity, maptypes, "Map Types", R.color.green_500);
+                        ListView lstMapType = (ListView) dd.findViewById(R.id.dialog_list_listview);
+                        dd.show();
+
+                        lstMapType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                if (position == 0) {
+                                    googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                                    dd.hide();
+                                } else if (position == 1) {
+                                    googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                                    dd.hide();
+                                } else if (position == 2) {
+                                    googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                                    dd.hide();
+                                } else if (position == 3) {
+                                    googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                                    dd.hide();
+                                }
+                            }
+                        });
+                    }
+                }, 200);
+
+
+            }
+        });
         txtName.setText(Helper.variables.getGlobalVar_currentUserFirstname(activity) + " " + Helper.variables.getGlobalVar_currentUserLastname(activity));
         String position = "";
         if (Helper.variables.getGlobalVar_currentLevel(activity) == 0) {
@@ -153,6 +206,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent intent = new Intent(MapsActivity.this, Activity_ClientUpdates.class);
                 intent.putExtra("id", id);
                 startActivity(intent);
+
+            }
+        });
+        lvcustomers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                closeDrawer();
+                final Handler handler1 = new Handler();
+                handler1.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Helper.map.moveCameraAnimate(googleMap, customerList.get(position).getLatLng(), 17);
+                    }
+                }, 300);
+
 
             }
         });
@@ -246,7 +315,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 adapterMapsActivity.clear();
             }
 
-            showClientUpdates();
+            showCustomerList();
         }
 
 
@@ -331,10 +400,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void showClientUpdates(){
+    private void showCustomerList(){
         adapterMapsActivity =  new Adapter_MapsActivity(context, R.layout.item_lv_mapsactivity, customerList);
         lvcustomers.setAdapter(adapterMapsActivity);
     }
+
+    private void closeDrawer() {
+        drawerLayout.closeDrawer(Gravity.LEFT);
+    }
+
+
 
     private void exitApp() {
         final Dialog d = Helper.common.dialogThemedYesNO(activity, "Do you wish to wish to exit the app? You will have to login next time.", "EXIT", "YES", "NO", R.color.red);

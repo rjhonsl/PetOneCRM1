@@ -252,7 +252,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
     }
 
     private void showEmptyUpdateImage() {
-        Cursor cur = db.getClientByClientID(clientID);
+        Cursor cur = db.getClientUpdateByID(clientID);
         int count = cur.getCount();
         if (count > 0) {
             llEmptyUpdates.setVisibility(View.GONE);
@@ -261,7 +261,6 @@ public class Activity_ClientUpdates extends FragmentActivity {
             llEmptyUpdates.setVisibility(View.VISIBLE);
             llListviewHOlder.setVisibility(View.GONE);
         }
-        Helper.common.toastShort(activity, count+"");
     }
 
     private void getClientUpdates() {
@@ -284,8 +283,9 @@ public class Activity_ClientUpdates extends FragmentActivity {
     private void showClientUpdates(){
         adapterClientUpdates =  new Adapter_ClientUpdates(context, R.layout.item_lv_clientupdates, updateList);
         lv_clientUpdates.setAdapter(adapterClientUpdates);
-//        Helper.common.toastShort(activity, updateList.size()+"");
     }
+
+
 
     @Override
     protected void onResume() {

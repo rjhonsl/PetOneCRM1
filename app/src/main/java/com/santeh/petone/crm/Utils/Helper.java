@@ -321,6 +321,23 @@ public class Helper {
             return d;
         }
 
+        public static Dialog dialogThemedList(Activity activity, String[] options, String title, int resIdColor){
+            final Dialog d = new Dialog(activity);//
+            d.requestWindowFeature(Window.FEATURE_NO_TITLE); //notitle
+            d.setContentView(R.layout.dialog__list);//Set the xml view of the dialog
+
+            ListView listview = (ListView) d.findViewById(R.id.dialog_list_listview);
+            ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(activity, R.layout.select_dialog_item_material, options); //selected item will look like a spinner set from XML
+            listViewAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            listview.setAdapter(listViewAdapter);
+
+            TextView txtTitle = (TextView) d.findViewById(R.id.dialog_okonly_title);
+            txtTitle.setBackground(activity.getResources().getDrawable(resIdColor));
+            txtTitle.setText(title);
+            d.show();
+            return d;
+        }
+
 
         public static void toastShort(Activity activity, String msg){
             LayoutInflater inflater = activity.getLayoutInflater();
