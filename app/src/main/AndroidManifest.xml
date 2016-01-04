@@ -38,6 +38,11 @@
         </activity>
 
         <activity
+            android:name=".Main.Activity_Edit_ClientInfo"
+            android:label="Client Information">
+        </activity>
+
+        <activity
             android:name=".Main.Activity_LoginScreen"
             android:label="@string/LoginScreen">
             <intent-filter>

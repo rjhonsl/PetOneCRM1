@@ -157,7 +157,7 @@ public class Helper {
         }
 
         public static String longtoTime_StringFormat(long dateInMillis){
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm aa");
+            SimpleDateFormat formatter = new SimpleDateFormat("hh:mm aa");
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(dateInMillis);
             return formatter.format(calendar.getTime());
@@ -322,17 +322,17 @@ public class Helper {
         }
 
 
-        public static void toastShort(Activity context, String msg){
-            LayoutInflater inflater = context.getLayoutInflater();
+        public static void toastShort(Activity activity, String msg){
+            LayoutInflater inflater = activity.getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
-                    (ViewGroup) context.findViewById(R.id.toast_layout_root));
+                    (ViewGroup) activity.findViewById(R.id.toast_layout_root));
 
             TextView text = (TextView) layout.findViewById(R.id.text);
-            Typeface font = Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
+            Typeface font = Typeface.createFromAsset(activity.getAssets(), "Roboto-Light.ttf");
             text.setTypeface(font);
             text.setText(msg);
 
-            Toast toast = new Toast(context.getApplicationContext());
+            Toast toast = new Toast(activity.getApplicationContext());
             toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
             toast.setDuration(Toast.LENGTH_SHORT);
             toast.setMargin(0, 0);

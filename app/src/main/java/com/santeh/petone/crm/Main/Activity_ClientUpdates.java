@@ -3,6 +3,7 @@ package com.santeh.petone.crm.Main;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.santeh.petone.crm.Adapter.Adapter_ClientUpdates;
 import com.santeh.petone.crm.DBase.DB_Helper_AquaCRM;
@@ -28,12 +30,14 @@ import java.util.List;
  */
 public class Activity_ClientUpdates extends FragmentActivity {
 
-    ImageButton btnAddUpdate, btnClientDetails, btnTitleLeft;
+    ImageButton btnAddUpdate, btnClientDetails, btnTitleLeft, btnTitleRight;
     Activity activity;
     Context context;
 
     DB_Query_AquaCRM db;
     String clientID;
+
+    TextView txtTitle;
 
     ListView lv_clientUpdates;
     Adapter_ClientUpdates adapterClientUpdates;
@@ -50,9 +54,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
         db = new DB_Query_AquaCRM(this);
         db.open();
 
-
         clientID = "";
-
 
         if (getIntent().hasExtra("id")){
             clientID = getIntent().getStringExtra("id");
@@ -71,12 +73,29 @@ public class Activity_ClientUpdates extends FragmentActivity {
 
         btnAddUpdate = (ImageButton) findViewById(R.id.btn_addupdate);
         btnTitleLeft = (ImageButton) findViewById(R.id.btn_title_left);
+        btnTitleRight = (ImageButton) findViewById(R.id.btn_title_right);
+        txtTitle = (TextView) findViewById(R.id.title);
         btnClientDetails = (ImageButton) findViewById(R.id.btn_viewClientDetails);
         lv_clientUpdates = (ListView) findViewById(R.id.listview_clientUpdates);
 
+        txtTitle.setText(strClientName);
 
         getClientUpdates();
 
+
+        btnTitleRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (db.isClientInfoPosted(clientID)) {
+                    Helper.common.toastShort(activity, "You can't modify information that is already posted. Please contact admin for further assistance.");
+                }else{
+                    Intent intent = new Intent(context, Activity_Edit_ClientInfo.class);
+                    intent.putExtra("id", clientID);
+                    startActivity(intent);
+                }
+
+            }
+        });
 
         btnClientDetails.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +213,6 @@ public class Activity_ClientUpdates extends FragmentActivity {
                                             adapterClientUpdates.clear();
                                             getClientUpdates();
                                         }
-
                                     }
                                 });
 
@@ -207,7 +225,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
                                 yes.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        db.deleteClientUpdatebyId(updateList.get(position1).getId()+"");
+                                        db.deleteClientUpdateById(updateList.get(position1).getId() + "");
                                         adapterClientUpdates.clear();
                                         getClientUpdates();
                                         d1.hide();

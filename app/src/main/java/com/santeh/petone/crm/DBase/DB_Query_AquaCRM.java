@@ -102,12 +102,12 @@ public class DB_Query_AquaCRM {
 
 
 
-	public boolean isCustCodeExisting(String farmid){
+	public boolean isCustCodeExisting(String custCode){
 		boolean isexisting = false;
 		String query = "SELECT * FROM "+DB_Helper_AquaCRM.TBL_CLIENTINFO +" WHERE "
 				+ DB_Helper_AquaCRM.CL_CLIENTINFO_CUSTCODE + " = ? "
 				;
-		String[] params = new String[] {farmid};
+		String[] params = new String[] {custCode};
 		Cursor cur = db.rawQuery(query, params);
 		if (cur!=null){
 			if (cur.getCount() > 0){
@@ -118,12 +118,32 @@ public class DB_Query_AquaCRM {
 	}
 
 
+
 	public boolean isClientUpdatePosted(String clientID){
 		boolean isexisting = false;
 		String query = "SELECT * FROM "+DB_Helper_AquaCRM.TBL_UPDATES +" WHERE "
 				+ DB_Helper_AquaCRM.CL_UPDATES_ID + " = ? "
 				+ " AND "
 				+ DB_Helper_AquaCRM.CL_UPDATES_isposted + " = 1 "
+				;
+
+		String[] params = new String[] {clientID};
+		Cursor cur = db.rawQuery(query, params);
+		if (cur!=null){
+			if (cur.getCount() > 0){
+				isexisting = true;
+			}
+		}
+		return  isexisting;
+	}
+
+
+	public boolean isClientInfoPosted(String clientID){
+		boolean isexisting = false;
+		String query = "SELECT * FROM "+DB_Helper_AquaCRM.TBL_CLIENTINFO +" WHERE "
+				+ DB_Helper_AquaCRM.CL_CLIENTINFO_ID + " = ? "
+				+ " AND "
+				+ DB_Helper_AquaCRM.CL_CLIENTINFO_IsPosted + " = 1 "
 				;
 
 		String[] params = new String[] {clientID};
@@ -187,9 +207,20 @@ public class DB_Query_AquaCRM {
 	 * 				DELETES						*
 	 ********************************************/
 
+	public boolean deleteClientInfoByID(String rowId) {
+		String where = DB_Helper_AquaCRM.CL_CLIENTINFO_ID+ "=" + rowId;
+		return db.delete(DB_Helper_AquaCRM.TBL_CLIENTINFO, where, null) != 0;
+	}
 
 
-	public boolean deleteClientUpdatebyId(String rowId) {
+	public boolean deleteClientUpdatesByClientID(String rowId) {
+		String where = DB_Helper_AquaCRM.CL_UPDATES_CLIENTID+ "=" + rowId;
+		return db.delete(DB_Helper_AquaCRM.TBL_UPDATES, where, null) != 0;
+	}
+
+
+
+	public boolean deleteClientUpdateById(String rowId) {
 		String where = DB_Helper_AquaCRM.CL_UPDATES_ID+ "=" + rowId;
 		return db.delete(DB_Helper_AquaCRM.TBL_UPDATES, where, null) != 0;
 	}
@@ -205,6 +236,20 @@ public class DB_Query_AquaCRM {
 		ContentValues newValues = new ContentValues();
 		newValues.put(DB_Helper_AquaCRM.CL_UPDATES_REMARKS, remarks);
 		return 	db.update(DB_Helper_AquaCRM.TBL_UPDATES, newValues, where, null);
+	}
+
+
+
+	public int updateClientInfo( String indexid, String address, String clientName, String custCode, String contactNumber) {
+		String where = DB_Helper_AquaCRM.CL_CLIENTINFO_ID + " = " + indexid;
+
+		ContentValues newValues = new ContentValues();
+		newValues.put(DB_Helper_AquaCRM.CL_CLIENTINFO_ADDRESS, address);
+		newValues.put(DB_Helper_AquaCRM.CL_CLIENTINFO_CLIENT_NAME, clientName);
+		newValues.put(DB_Helper_AquaCRM.CL_CLIENTINFO_CUSTCODE, custCode);
+		newValues.put(DB_Helper_AquaCRM.CL_CLIENTINFO_C_NUMBER, contactNumber);
+
+		return 	db.update(DB_Helper_AquaCRM.TBL_CLIENTINFO, newValues, where, null);
 	}
 
 
