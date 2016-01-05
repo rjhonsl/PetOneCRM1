@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -122,6 +123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         String[] maptypes = {"Normal", "Satellite", "Terrain", "Hybrid"};
                         final Dialog dd = Helper.common.dialogThemedList(activity, maptypes, "Map Types", R.color.green_500);
                         ListView lstMapType = (ListView) dd.findViewById(R.id.dialog_list_listview);
+                        dd.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                         dd.show();
 
                         lstMapType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
