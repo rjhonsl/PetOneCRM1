@@ -124,7 +124,6 @@
         <ListView android:layout_width="match_parent"
                   android:layout_height="300dp"
                   android:id="@+id/lv_map_customers"
-                  android:entries="@array/filler_array"
             />
 
         <View android:layout_width="match_parent"
