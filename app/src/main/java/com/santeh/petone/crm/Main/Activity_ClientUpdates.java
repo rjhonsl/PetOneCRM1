@@ -17,8 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.santeh.petone.crm.Adapter.Adapter_ClientUpdates;
-import com.santeh.petone.crm.DBase.DB_Helper_AquaCRM;
-import com.santeh.petone.crm.DBase.DB_Query_AquaCRM;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
+import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
@@ -33,7 +33,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
     Activity activity;
     Context context;
 
-    DB_Query_AquaCRM db;
+    DB_Query_PetOneCRM db;
     String clientID;
 
     LinearLayout llEmptyUpdates, llListviewHOlder;
@@ -51,7 +51,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
 
         activity = this;
         context = Activity_ClientUpdates.this;
-        db = new DB_Query_AquaCRM(this);
+        db = new DB_Query_PetOneCRM(this);
         db.open();
 
         clientID = "";
@@ -61,11 +61,11 @@ public class Activity_ClientUpdates extends FragmentActivity {
             Cursor cur = db.getClientByClientID(clientID);
             if (cur.getCount() > 0) {
                 while (cur.moveToNext()) {
-                    strClientName = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_CLIENT_NAME));
-                    strCustCode = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_CUSTCODE));
-                    strContactNumber = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_C_NUMBER));
-                    strAddress = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_ADDRESS));
-                    strDateAdded = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_dateAdded));
+                    strClientName = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME));
+                    strCustCode = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE));
+                    strContactNumber = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER));
+                    strAddress = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS));
+                    strDateAdded = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded));
                 }
             }
         }
@@ -270,9 +270,9 @@ public class Activity_ClientUpdates extends FragmentActivity {
             while (cur.moveToNext()) {
 
                 CustInfoObject updates = new CustInfoObject();
-                updates.setDateAddedToDB(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_UPDATES_DATEADDED)));
-                updates.setRemarks(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_UPDATES_REMARKS)));
-                updates.setId(cur.getInt(cur.getColumnIndex(DB_Helper_AquaCRM.CL_UPDATES_ID)));
+                updates.setDateAddedToDB(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED)));
+                updates.setRemarks(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_REMARKS)));
+                updates.setId(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_ID)));
 
                 updateList.add(updates);
             }

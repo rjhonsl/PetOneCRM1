@@ -23,8 +23,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.santeh.petone.crm.DBase.DB_Helper_AquaCRM;
-import com.santeh.petone.crm.DBase.DB_Query_AquaCRM;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
+import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.FusedLocation;
 import com.santeh.petone.crm.Utils.Helper;
@@ -53,8 +53,8 @@ public class Activity_LoginScreen extends Activity{
     FusedLocation fusedLocation;
     PackageInfo pInfo = null;
 
-    DB_Helper_AquaCRM dbHelper;
-    DB_Query_AquaCRM db;
+    DB_Helper_PetOneCRM dbHelper;
+    DB_Query_PetOneCRM db;
 
     float filesize;
 
@@ -68,8 +68,8 @@ public class Activity_LoginScreen extends Activity{
         activity = this;
         context = Activity_LoginScreen.this;
 
-        dbHelper = new DB_Helper_AquaCRM(this);
-        db = new DB_Query_AquaCRM(this);
+        dbHelper = new DB_Helper_PetOneCRM(this);
+        db = new DB_Query_PetOneCRM(this);
         db.open();
 
 
@@ -308,15 +308,15 @@ public class Activity_LoginScreen extends Activity{
                 if (cur.getCount() > 0 ){
                     for (int i = 0; i < cur.getCount() ; i++) {
                         while (cur.moveToNext()) {
-                            Helper.variables.setGlobalVar_currentlevel(cur.getInt(cur.getColumnIndex(DB_Helper_AquaCRM.CL_USERS_userlvl)), activity);
-                            Helper.variables.setGlobalVar_currentUserID(cur.getInt(cur.getColumnIndex(DB_Helper_AquaCRM.CL_USERS_ID)), activity);
-                            Helper.variables.setGlobalVar_currentFirstname(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_USERS_firstName)), activity);
-                            Helper.variables.setGlobalVar_currentLastname(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_USERS_lastName)), activity);
+                            Helper.variables.setGlobalVar_currentlevel(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USERS_userlvl)), activity);
+                            Helper.variables.setGlobalVar_currentUserID(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USERS_ID)), activity);
+                            Helper.variables.setGlobalVar_currentFirstname(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USERS_firstName)), activity);
+                            Helper.variables.setGlobalVar_currentLastname(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USERS_lastName)), activity);
                             Helper.variables.setGlobalVar_currentUsername(txtusername.getText().toString(),activity);
                             Helper.variables.setGlobalVar_currentUserpassword(txtpassword.getText().toString(),activity);
                             Helper.variables.setGlobalVar_currentAssignedArea("n/a", activity);
-                            Helper.variables.setGlobalVar_DateAddedToDb(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_USERS_dateAdded)), activity);
-                            Helper.variables.setGlobalVar_currentIsActive(cur.getInt(cur.getColumnIndex(DB_Helper_AquaCRM.CL_USERS_isactive)), activity);
+                            Helper.variables.setGlobalVar_DateAddedToDb(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USERS_dateAdded)), activity);
+                            Helper.variables.setGlobalVar_currentIsActive(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USERS_isactive)), activity);
                         }
 
                         if (Helper.variables.getGlobalVar_currentisActive(activity) == 1){

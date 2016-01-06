@@ -28,8 +28,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.santeh.petone.crm.Adapter.Adapter_MapsActivity;
-import com.santeh.petone.crm.DBase.DB_Helper_AquaCRM;
-import com.santeh.petone.crm.DBase.DB_Query_AquaCRM;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
+import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.FusedLocation;
@@ -52,8 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     CircleOptions circleOptions_addLocation;
     Circle mapcircle;
 
-    DB_Helper_AquaCRM dbHelper;
-    DB_Query_AquaCRM db;
+    DB_Helper_PetOneCRM dbHelper;
+    DB_Query_PetOneCRM db;
     ListView lvcustomers;
     List<CustInfoObject> customerList;
     public static int requestCODE_addMarker = 1;
@@ -75,8 +75,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fusedLocation.buildGoogleApiClient(context);
         fusedLocation.connectToApiClient();
 
-        dbHelper = new DB_Helper_AquaCRM(this);
-        db = new DB_Query_AquaCRM(this);
+        dbHelper = new DB_Helper_PetOneCRM(this);
+        db = new DB_Query_PetOneCRM(this);
         db.open();
 
         List<CustInfoObject> customerList;
@@ -290,12 +290,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             customerList = new ArrayList<>();
             while (cur.moveToNext()) {
                 LatLng latLng = new LatLng(
-                        Double.parseDouble(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_LAT))),
-                        Double.parseDouble(cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_LNG))));
+                        Double.parseDouble(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_LAT))),
+                        Double.parseDouble(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_LNG))));
 
-                String address = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_ADDRESS));
-                String clientName = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_CLIENT_NAME));
-                String id = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_ID));
+                String address = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS));
+                String clientName = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME));
+                String id = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ID));
 
                 googleMap.setInfoWindowAdapter(new CustomerInfoWindow());
                 Helper.map.addMarker(googleMap, latLng, R.drawable.ic_pet24, clientName, address, id);

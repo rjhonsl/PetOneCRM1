@@ -13,7 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.santeh.petone.crm.DBase.DB_Query_AquaCRM;
+import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
 
@@ -33,7 +33,7 @@ public class Activity_Add_ClientInfo extends FragmentActivity{
     Activity activity;
     Context context;
 
-    DB_Query_AquaCRM db;
+    DB_Query_PetOneCRM db;
 
     EditText edtCustomerCode, edtClientName, edtContactNumber, edtAddress;
     TextView txtnote, txttitle;
@@ -48,7 +48,7 @@ public class Activity_Add_ClientInfo extends FragmentActivity{
 
         btnOK = (ImageButton) findViewById(R.id.btn_ok);
 
-        db = new DB_Query_AquaCRM(this);
+        db = new DB_Query_PetOneCRM(this);
         db.open();
 
 

@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DB_Helper_AquaCRM extends SQLiteOpenHelper {
+public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 
 	private static final String LOGTAG = "DB_GPS";
 	private static final String DATABASE_NAME = "petone.db";
@@ -133,7 +133,7 @@ public class DB_Helper_AquaCRM extends SQLiteOpenHelper {
 
 
 	//connects db
-	public DB_Helper_AquaCRM(Context context) {
+	public DB_Helper_PetOneCRM(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		Log.d(LOGTAG, "table " + DATABASE_NAME + " has been opened: " + String.valueOf(context));
 	}

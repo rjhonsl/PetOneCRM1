@@ -15,8 +15,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.santeh.petone.crm.DBase.DB_Helper_AquaCRM;
-import com.santeh.petone.crm.DBase.DB_Query_AquaCRM;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
+import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
 
@@ -35,7 +35,7 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
     Activity activity;
     Context context;
 
-    DB_Query_AquaCRM db;
+    DB_Query_PetOneCRM db;
 
     ImageButton btnOK, btnBack, btnDelete;
     EditText edtCustomerCode, edtClientName, edtContactNumber, edtAddress;
@@ -60,7 +60,7 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
         btnBack = (ImageButton) findViewById(R.id.btn_title_left);
         btnDelete = (ImageButton) findViewById(R.id.btn_delete);
 
-        db = new DB_Query_AquaCRM(this);
+        db = new DB_Query_PetOneCRM(this);
         db.open();
 
         clientID = "";
@@ -69,11 +69,11 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
             Cursor cur = db.getClientByClientID(clientID);
             if (cur.getCount() > 0) {
                 while (cur.moveToNext()) {
-                    strClientName = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_CLIENT_NAME));
-                    strCustCode = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_CUSTCODE));
-                    strContactNumber = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_C_NUMBER));
-                    strAddress = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_ADDRESS));
-                    strDateAdded = cur.getString(cur.getColumnIndex(DB_Helper_AquaCRM.CL_CLIENTINFO_dateAdded));
+                    strClientName = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME));
+                    strCustCode = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE));
+                    strContactNumber = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER));
+                    strAddress = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS));
+                    strDateAdded = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded));
                 }
             }
         }
