@@ -10,20 +10,20 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	private static final String LOGTAG = "DB_GPS";
 	private static final String DATABASE_NAME = "petone.db";
 	//each time you change data structure, you must increment this by 1
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 5;
 
 	//reference for tblarea
 	public static final String TBL_CLIENTINFO = "[SALES.PETONE.CRM.CLIENTINFO]";
 	public static final String CL_CLIENTINFO_ID 		= "ci_customerId";
-	public static final String CL_CLIENTINFO_LAT 		= "latitude";
-	public static final String CL_CLIENTINFO_LNG 		= "longtitude";
-	public static final String CL_CLIENTINFO_ADDRESS 	= "address";
-	public static final String CL_CLIENTINFO_CLIENT_NAME= "client_name";
-	public static final String CL_CLIENTINFO_CUSTCODE 	= "custcode";
-	public static final String CL_CLIENTINFO_C_NUMBER 	= "contact_number";
-	public static final String CL_CLIENTINFO_dateAdded 	= "dateAdded";
-	public static final String CL_CLIENTINFO_addedby 	= "addedby";
-	public static final String CL_CLIENTINFO_IsPosted 	= "isposted";
+	public static final String CL_CLIENTINFO_LAT 		= "ci_latitude";
+	public static final String CL_CLIENTINFO_LNG 		= "ci_longtitude";
+	public static final String CL_CLIENTINFO_ADDRESS 	= "ci_address";
+	public static final String CL_CLIENTINFO_CLIENT_NAME= "ci_client_name";
+	public static final String CL_CLIENTINFO_CUSTCODE 	= "ci_custcode";
+	public static final String CL_CLIENTINFO_C_NUMBER 	= "ci_contact_number";
+	public static final String CL_CLIENTINFO_dateAdded 	= "ci_dateAdded";
+	public static final String CL_CLIENTINFO_addedby 	= "ci_addedby";
+	public static final String CL_CLIENTINFO_IsPosted 	= "ci_isposted";
 	public static final String[] ALL_KEY_fARM			= new String[]{CL_CLIENTINFO_ID, CL_CLIENTINFO_LAT, CL_CLIENTINFO_LNG, CL_CLIENTINFO_ADDRESS, CL_CLIENTINFO_CLIENT_NAME,
 	CL_CLIENTINFO_CUSTCODE, CL_CLIENTINFO_C_NUMBER, CL_CLIENTINFO_dateAdded, CL_CLIENTINFO_addedby, CL_CLIENTINFO_IsPosted};
 
@@ -31,7 +31,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 
 	public static final String TBL_UPDATES 					= "[SALES.PETONE.CRM.UPDATES]";
 	public static final String CL_UPDATES_ID 				= "updates_id";
-	public static final String CL_UPDATES_REMARKS = "updates_remakrs";
+	public static final String CL_UPDATES_REMARKS 			= "updates_remakrs";
 	public static final String CL_UPDATES_CLIENTID 			= "updates_clientid";
 	public static final String CL_UPDATES_DATEADDED 		= "updates_dateAdded";
 	public static final String CL_UPDATES_isposted 			= "updates_isposted";
@@ -83,7 +83,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 					CL_CLIENTINFO_CLIENT_NAME + " TEXT, " +
 					CL_CLIENTINFO_CUSTCODE 	+ " TEXT, " +
 					CL_CLIENTINFO_C_NUMBER 	+ " TEXT, " +
-					CL_CLIENTINFO_dateAdded + " DATETIME, " +
+					CL_CLIENTINFO_dateAdded + " INTEGER, " +
 					CL_CLIENTINFO_addedby 	+ " INTEGER, " +
 					CL_CLIENTINFO_IsPosted 	+ " INTEGER " +
 					")";
@@ -110,7 +110,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 					CL_USERS_username 		+ " TEXT, " +
 					CL_USERS_password 		+ " TEXT, " +
 					CL_USERS_deviceid 		+ " TEXT, " +
-					CL_USERS_dateAdded 		+ " DATE, " +
+					CL_USERS_dateAdded 		+ " INTEGER, " +
 					CL_USERS_isactive 		+ " INTEGER " +
 					")";
 
@@ -122,7 +122,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 					CL_USER_ACTIVITY_ACTIONDONE 	+ " TEXT, " +
 					CL_USER_ACTIVITY_LAT 			+ " TEXT, " +
 					CL_USER_ACTIVITY_LNG 			+ " TEXT, " +
-					CL_USER_ACTIVITY_DATETIME 		+ " DATETIME, " +
+					CL_USER_ACTIVITY_DATETIME 		+ " INTEGER, " +
 					CL_USER_ACTIVITY_ACTIONTYPE 	+ " TEXT," +
 					CL_USER_ACTIVITY_isPosted 		+ " INTEGER" +
 					")";
