@@ -97,6 +97,22 @@ public class DB_Query_PetOneCRM {
 
 
 
+	public void insertUserAccountInfo(int userid, int userlvl, String firstname, String lastname, String username, String password, String deviceID, String dateAdded, int isActive){
+		ContentValues values = new ContentValues();
+		values.put(DB_Helper_PetOneCRM.CL_USERS_ID, userid);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_userlvl, userlvl);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_lastName, lastname);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_firstName, firstname);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_username, username);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_password, password);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_deviceid, deviceID);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_dateAdded, dateAdded );
+		values.put(DB_Helper_PetOneCRM.CL_USERS_isactive, isActive);
+		db.insert(DB_Helper_PetOneCRM.TBL_USERS, null, values);
+	}
+
+
+
 	/********************************************
 	 * 				VALIDATIONS					*
 	 ********************************************/
@@ -105,6 +121,19 @@ public class DB_Query_PetOneCRM {
 	/********************************************
 	 * 				SELECTS						*
 	 ********************************************/
+
+	public boolean isUserExisting(String userID){
+		String query = "SELECT * FROM "+DB_Helper_PetOneCRM.TBL_USERS+" WHERE "+DB_Helper_PetOneCRM.CL_USERS_ID+" = ?;";
+		String[] params = new String[] {userID};
+		Cursor cur = db.rawQuery(query, params);
+		boolean isExisting = false;
+
+		if (cur.getCount() > 0) {
+			isExisting = true;
+		}
+
+		return isExisting;
+	}
 
 	public int getUser_Count() {
 		String query = "SELECT * FROM "+ DB_Helper_PetOneCRM.TBL_USERS+";";
@@ -263,6 +292,20 @@ public class DB_Query_PetOneCRM {
 		newValues.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER, contactNumber);
 
 		return 	db.update(DB_Helper_PetOneCRM.TBL_CLIENTINFO, newValues, where, null);
+	}
+
+
+	public int updateRowOneUser(String userid, String lvl, String firstname, String lastname, String username, String password, String deviceid, String dateAdded) {
+		String where = DB_Helper_PetOneCRM.CL_USERS_ID + " = " + userid;
+		ContentValues newValues = new ContentValues();
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_userlvl, lvl);
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_firstName, firstname);
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_lastName, lastname);
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_username, username);
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_password, password);
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_deviceid, deviceid);
+		newValues.put(DB_Helper_PetOneCRM.CL_USERS_dateAdded, dateAdded);
+		return 	db.update(DB_Helper_PetOneCRM.TBL_USERS, newValues, where, null);
 	}
 
 

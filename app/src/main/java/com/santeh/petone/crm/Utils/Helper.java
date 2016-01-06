@@ -48,6 +48,11 @@ public class Helper {
 
     public static class variables{
 
+        public static String sourceAddress_goDaddy                  = "http://santeh-webservice.com/php/android_json_post/";
+
+
+        public static String URL_LOGIN                                  = sourceAddress_goDaddy + "login.php";
+
         public static void setGlobalVar_currentUserID(int ID, Activity activity){
             ((Var) activity.getApplication()).setCurrentuser(ID);
         }

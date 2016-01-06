@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,13 +23,25 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.model.LatLng;
+import com.santeh.petone.crm.APIs.MyVolleyAPI;
 import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
 import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
+import com.santeh.petone.crm.Obj.CustInfoObject;
+import com.santeh.petone.crm.Parser.AccountsParser;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.FusedLocation;
 import com.santeh.petone.crm.Utils.Helper;
 import com.santeh.petone.crm.Utils.Logging;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rjhonsl on 9/4/2015.
@@ -58,6 +71,7 @@ public class Activity_LoginScreen extends Activity{
     DB_Query_PetOneCRM db;
 
     float filesize;
+    List<CustInfoObject> listaccounts = new ArrayList<>();
 
 
 
@@ -78,10 +92,10 @@ public class Activity_LoginScreen extends Activity{
         fusedLocation = new FusedLocation(context, activity);
         fusedLocation.buildGoogleApiClient(context);
 
-        if (db.getUser_Count() < 1) {
-            long a =  db.insertAdminAccount(context);
-            Helper.common.toastLong(activity, "users: " + a );
-        }
+//        if (db.getUser_Count() < 1) {
+//            long a =  db.insertAdminAccount(context);
+//            Helper.common.toastLong(activity, "users: " + a );
+//        }
 
 
         try {
@@ -290,19 +304,31 @@ public class Activity_LoginScreen extends Activity{
 
         fusedLocation.connectToApiClient();
         Helper.map.isLocationAvailablePrompt(context, activity);
-//        if(Helper.common.isNetworkAvailable(activity)) { // if network was available
-////            updatingUserDB();
-//            txtprogressdialog_message.setText("Logging in...");
-//
-//        }else{//if there was no network
-//            if ( db.getUser_Count()  <=  0 ) { //if user db was null
-//                //require user to connect to internet
-//                if(!Helper.isNetworkAvailable(activity)) { Helper.toastShort(activity, "Internet connection is needed to start using the app."); }
-//                else{
-//                    txtprogressdialog_message.setText("Preparing app please wait...");
-//                    PD.show();
-//                    updatingUserDB(); }
-//            }else { //if there is an existing account in local db
+
+        if(Helper.common.isNetworkAvailable(activity)) { // if network was available
+            updatingUserDB();
+            txtprogressdialog_message.setText("Logging in...");
+            PD.show();
+
+        }else{//if there was no network
+            if ( db.getUser_Count()  <=  0 ) { //if user db was null
+                //require user to connect to internet
+                if(!Helper.common.isNetworkAvailable(activity)) {
+                    final Dialog d = Helper.common.dialogThemedOkOnly(activity, "Warning", "Your device should be connected to the internet when logging in for the first time!", "OK", R.color.red_material_500);
+                    Button ok = (Button) d.findViewById(R.id.btn_dialog_okonly_OK);
+                    ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            d.hide();
+                        }
+                    });
+                }
+                else{
+                    txtprogressdialog_message.setText("Preparing app please wait...");
+                    PD.show();
+                    updatingUserDB();
+                }
+            }else { //if there is an existing account in local db
                 txtprogressdialog_message.setText("Logging in...");
                 PD.show();
                 Cursor cur =  db.getUserIdByLogin(txtusername.getText().toString(), txtpassword.getText().toString(), Helper.common.getMacAddress(context));
@@ -351,8 +377,8 @@ public class Activity_LoginScreen extends Activity{
                     Helper.common.toastShort(activity, "Wrong account credentials. Please try again");
                     PD.hide();
                 }
-//            }
-//        }
+            }
+        }
     }
 
 
@@ -404,5 +430,103 @@ public class Activity_LoginScreen extends Activity{
         });
     }
 
+
+
+
+    private void updatingUserDB() {
+        PD.show();
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, Helper.variables.URL_LOGIN,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(final String response) {
+
+                        PD.dismiss();
+                        if (response.substring(1, 2).equalsIgnoreCase("0")) {
+                            Helper.common.toastLong(activity, "Username and password does not seem to match.");
+                        } else {
+
+                            listaccounts = AccountsParser.parseFeed(response);
+
+
+                            if (listaccounts.get(0).getIsPetOne_active() == 1){
+                                Intent intent = new Intent(Activity_LoginScreen.this, MapsActivity.class);
+                                Helper.variables.setGlobalVar_currentlevel(listaccounts.get(0).getUserlevel(), activity);
+                                Helper.variables.setGlobalVar_currentUserID(listaccounts.get(0).getUserid(), activity);
+                                Helper.variables.setGlobalVar_currentFirstname(listaccounts.get(0).getFirstname(), activity);
+                                Helper.variables.setGlobalVar_currentLastname(listaccounts.get(0).getLastname(), activity);
+                                Helper.variables.setGlobalVar_currentUsername(txtusername.getText().toString(), activity);
+                                Helper.variables.setGlobalVar_currentUserpassword(txtpassword.getText().toString(), activity);
+                                Helper.variables.setGlobalVar_currentAssignedArea(listaccounts.get(0).getAssingedArea(), activity);
+                                Helper.variables.setGlobalVar_DateAddedToDb(listaccounts.get(0).getDateAddedToDB(), activity);
+                                Helper.variables.setGlobalVar_currentIsActive(listaccounts.get(0).getIsactive(), activity);
+                                Helper.variables.setGlobalVar_deviceID(listaccounts.get(0).getDeviceid(), activity);
+
+
+                                if (db.isUserExisting(Helper.variables.getGlobalVar_currentUserID(activity) + "")) {
+                                    Log.d("LOCAL DB", "UPDATING USER");
+                                    int x = db.updateRowOneUser(
+                                            Helper.variables.getGlobalVar_currentUserID(activity) + "",
+                                            Helper.variables.getGlobalVar_currentLevel(activity) + "",
+                                            Helper.variables.getGlobalVar_currentUserFirstname(activity) + "",
+                                            Helper.variables.getGlobalVar_currentUserLastname(activity) + "",
+                                            Helper.variables.getGlobalVar_currentUserName(activity) + "",
+                                            Helper.variables.getGlobalVar_currentUserPassword(activity) + "",
+                                            Helper.variables.getGlobalVar_currentDeviceID(activity) + "",
+                                            Helper.variables.getGlobalVar_DateAdded(activity) + "");
+                                    Log.d("LOCAL DB", "UPDATE FINISHED" + x);
+                                }else{
+                                    db.insertUserAccountInfo(
+                                            Helper.variables.getGlobalVar_currentUserID(activity),
+                                            Helper.variables.getGlobalVar_currentLevel(activity),
+                                            Helper.variables.getGlobalVar_currentUserFirstname(activity),
+                                            Helper.variables.getGlobalVar_currentUserLastname(activity),
+                                            Helper.variables.getGlobalVar_currentUserName(activity),
+                                            Helper.variables.getGlobalVar_currentUserPassword(activity),
+                                            Helper.variables.getGlobalVar_currentDeviceID(activity),
+                                            Helper.variables.getGlobalVar_DateAdded(activity),
+                                            Helper.variables.getGlobalVar_currentisActive(activity)
+                                    );
+                                }
+
+                                intent.putExtra("userid", listaccounts.get(0).getUserid());
+                                intent.putExtra("userlevel", listaccounts.get(0).getUserlevel());
+                                intent.putExtra("username", listaccounts.get(0).getUsername());
+                                intent.putExtra("firstname", listaccounts.get(0).getFirstname());
+                                intent.putExtra("lastname", listaccounts.get(0).getLastname());
+                                intent.putExtra("userdescription", listaccounts.get(0).getAccountlevelDescription());
+                                intent.putExtra("fromActivity", "login");
+                                intent.putExtra("lat",fusedLocation.getLastKnowLocation().latitude+"");
+                                intent.putExtra("long",fusedLocation.getLastKnowLocation().longitude+"");
+                                startActivity(intent);
+                            }else{
+                                Helper.common.toastLong(activity, "The account you are trying to use is not available for this application.");
+                            }
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                PD.dismiss();
+                Helper.common.dialogThemedOkOnly(activity, "Error", error.toString(), "OK", R.color.red);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("deviceid", Helper.common.getMacAddress(activity));
+                params.put("username", txtusername.getText().toString());
+                params.put("password", txtpassword.getText().toString());
+
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        MyVolleyAPI api = new MyVolleyAPI();
+        api.addToReqQueue(postRequest, Activity_LoginScreen.this);
+
+    }
 
 }//end of class

@@ -75,6 +75,9 @@ public class CustInfoObject {
 	private int isPosted_pond;
 	private int isPosted_cust;
 	private int isPosted_weekly;
+	private int isAqua_active;
+	private int isHogs_active;
+	private int isPetOne_active;
 
 	private String customerID;
 	private String mainCustomerId;
@@ -853,5 +856,29 @@ public class CustInfoObject {
 
 	public void setLatLng(LatLng latLng) {
 		this.latLng = latLng;
+	}
+
+	public int getIsAqua_active() {
+		return isAqua_active;
+	}
+
+	public void setIsAqua_active(int isAqua_active) {
+		this.isAqua_active = isAqua_active;
+	}
+
+	public int getIsHogs_active() {
+		return isHogs_active;
+	}
+
+	public void setIsHogs_active(int isHogs_active) {
+		this.isHogs_active = isHogs_active;
+	}
+
+	public int getIsPetOne_active() {
+		return isPetOne_active;
+	}
+
+	public void setIsPetOne_active(int isPetOne_active) {
+		this.isPetOne_active = isPetOne_active;
 	}
 }
