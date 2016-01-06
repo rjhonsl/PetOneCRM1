@@ -173,8 +173,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void run() {
                 try {
                     fusedLocation.connectToApiClient();
-
-
                     LatLng latLng = fusedLocation.getLastKnowLocation();
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
