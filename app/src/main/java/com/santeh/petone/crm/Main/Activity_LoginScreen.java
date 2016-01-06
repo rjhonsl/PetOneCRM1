@@ -28,6 +28,7 @@ import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.FusedLocation;
 import com.santeh.petone.crm.Utils.Helper;
+import com.santeh.petone.crm.Utils.Logging;
 
 /**
  * Created by rjhonsl on 9/4/2015.
@@ -338,6 +339,7 @@ public class Activity_LoginScreen extends Activity{
                                 public void run() {
                                     PD.hide();
                                     startActivity(intent);
+                                    Logging.userAction(activity, context, Logging.ACTION_LOGIN, Logging.TYPE_USER);
                                 }
                             }, 800);
                         }else{

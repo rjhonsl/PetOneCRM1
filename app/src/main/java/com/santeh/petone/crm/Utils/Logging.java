@@ -9,30 +9,57 @@ import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 /**
  * Created by rjhonsl on 9/10/2015.
  */
-public class UserDBLogging {
+public class Logging {
 
     static boolean isRecorded = false;
     static FusedLocation fusedLocation;
     static DB_Query_PetOneCRM db;
-    public static String ACTION_ADD = "ADD ";
-    public static String ACTION_EDIT = "EDIT ";
-    public static String ACTION_DELETE = "DELETE ";
-    public static String ACTION_LOGIN = " LOGIN ";
-    public static String TYPE_ADMIN_TESTING = " ADMIN_TEST ";
+
+    public static String ACTION_ADD = "ADD";
+    public static String ACTION_EDIT = "EDIT";
+    public static String ACTION_DELETE = "DELETE";
+
+    public static String ACTION_LOGIN = " LOGIN";
+
+    public static String TYPE_ADMIN_TESTING = "ADMIN_TEST";
     public static String TYPE_USER = " USER ";
 
-    public static boolean userAction(final Activity activity, final Context context, final String userAction, String rowid , String tableName, final String actionType) {
+    /** Action Related to Database **/
+    public static boolean userAction(final Activity activity, final Context context, final String userDBAction, String rowID , String tableName, final String actionType) {
         fusedLocation = new FusedLocation(context, activity);
         fusedLocation.buildGoogleApiClient(context);
         fusedLocation.connectToApiClient();
         db = new DB_Query_PetOneCRM(context);
-        final String action = userAction + " " + rowid + " on " + tableName;
+        final String action = userDBAction + " " + rowID + " on " + tableName;
+
+
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                UserDBLogging.InsertUserActivity(Helper.variables.getGlobalVar_currentUserID(activity) + "",
+                Logging.InsertUserActivity(Helper.variables.getGlobalVar_currentUserID(activity) + "",
+                        action, actionType,
+                        fusedLocation.getLastKnowLocation().latitude + "", fusedLocation.getLastKnowLocation().longitude + "");
+            }
+        }, 500);
+
+        return true;
+    }
+
+    /** Action NOT Related to Database **/
+    public static boolean userAction(final Activity activity, final Context context, final String userDBAction, final String actionType) {
+        fusedLocation = new FusedLocation(context, activity);
+        fusedLocation.buildGoogleApiClient(context);
+        fusedLocation.connectToApiClient();
+        db = new DB_Query_PetOneCRM(context);
+        final String action = userDBAction;
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Logging.InsertUserActivity(Helper.variables.getGlobalVar_currentUserID(activity) + "",
                         action, actionType,
                         fusedLocation.getLastKnowLocation().latitude + "", fusedLocation.getLastKnowLocation().longitude + "");
             }
@@ -43,7 +70,7 @@ public class UserDBLogging {
 
 
 
-    public static boolean InsertUserActivity(final String userid, final String action, final String actiontype, final String latitude, final String longitude){
+    private static boolean InsertUserActivity(final String userid, final String action, final String actiontype, final String latitude, final String longitude){
         db.open();
         db.insertUserActivityData(Integer.parseInt(userid), action, fusedLocation.getLastKnowLocation().latitude+"", fusedLocation.getLastKnowLocation().longitude+"", System.currentTimeMillis()+"", actiontype);
 

@@ -10,10 +10,10 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	private static final String LOGTAG = "DB_GPS";
 	private static final String DATABASE_NAME = "petone.db";
 	//each time you change data structure, you must increment this by 1
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 3;
 
 	//reference for tblarea
-	public static final String TBL_CLIENTINFO = "[SALES.CLIENTINFO]";
+	public static final String TBL_CLIENTINFO = "[SALES.PETONE.CRM.CLIENTINFO]";
 	public static final String CL_CLIENTINFO_ID 		= "ci_customerId";
 	public static final String CL_CLIENTINFO_LAT 		= "latitude";
 	public static final String CL_CLIENTINFO_LNG 		= "longtitude";
@@ -29,7 +29,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 
 
 
-	public static final String TBL_UPDATES 					= "[SALES.UPDATES]";
+	public static final String TBL_UPDATES 					= "[SALES.PETONE.CRM.UPDATES]";
 	public static final String CL_UPDATES_ID 				= "updates_id";
 	public static final String CL_UPDATES_REMARKS = "updates_remakrs";
 	public static final String CL_UPDATES_CLIENTID 			= "updates_clientid";
@@ -39,7 +39,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 			CL_UPDATES_DATEADDED, CL_UPDATES_isposted};
 
 
-	public static final String TBL_USERS = "[SALES.USERS]";
+	public static final String TBL_USERS = "[SALES.PETONE.CRM.USERS]";
 	public static final String CL_USERS_ID				= "users_id";
 	public static final String CL_USERS_userlvl			= "userlvl";
 	public static final String CL_USERS_firstName		= "users_firstname";
@@ -54,7 +54,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 
 
 	//reference for tblarea
-	public static final String TBL_USER_ACTIVITY = "[SALES.USERS.ACTIVITY]";
+	public static final String TBL_USER_ACTIVITY = "[SALES.PETONE.CRM.USERS.ACTIVITY]";
 
 	public static final String CL_USER_ACTIVITY_ID			= "user_act_id";
 	public static final String CL_USER_ACTIVITY_USERID		= "user_act_userid";

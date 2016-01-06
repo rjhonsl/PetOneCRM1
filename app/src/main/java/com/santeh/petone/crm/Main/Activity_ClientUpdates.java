@@ -22,6 +22,7 @@ import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
+import com.santeh.petone.crm.Utils.Logging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
 
         getClientUpdates();
 
-        showEmptyUpdateImage();
+
 
 
         btnTitleRight.setOnClickListener(new View.OnClickListener() {
@@ -142,21 +143,16 @@ public class Activity_ClientUpdates extends FragmentActivity {
                     public void onClick(View v) {
 
                         int id = (int) db.insertClientUpdates(edtRemarks.getText().toString(), clientID);
+                        Logging.userAction(activity, context, Logging.ACTION_ADD, id + "", DB_Helper_PetOneCRM.TBL_UPDATES, Logging.TYPE_USER);
                         d.hide();
-                        CustInfoObject singleUpdate = new CustInfoObject();
 
+                        CustInfoObject singleUpdate = new CustInfoObject();
                         singleUpdate.setDateAddedToDB(System.currentTimeMillis() + "");
                         singleUpdate.setRemarks(edtRemarks.getText().toString());
                         singleUpdate.setId(id);
-
                         updateList.add(singleUpdate);
 
-
-                        if (adapterClientUpdates != null)
-                        {
-                            adapterClientUpdates.clear();
-                        }
-
+                        if (adapterClientUpdates != null) { adapterClientUpdates.clear(); }
                         getClientUpdates();
 
                     }
@@ -177,7 +173,6 @@ public class Activity_ClientUpdates extends FragmentActivity {
         lv_clientUpdates.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position1, long id) {
-//                Helper.common.dialogThemedOkOnly(activity, "Longpressed", view.getId() + " was long pressed " + id + " " + position,"OK", R.color.red_material_600);
                 boolean isposted = db.isClientUpdatePosted(updateList.get(position1).getId()+"");
                 if (isposted) {
                     Helper.common.dialogThemedOkOnly(activity, "Warning", "You can't modify uploaded updates", "OK", R.color.red_material_400);
@@ -193,11 +188,12 @@ public class Activity_ClientUpdates extends FragmentActivity {
 
                             if (position == 0) {
 
-                                final Dialog d2 = Helper.common.dialogYesNoWithMultiLineEditText(activity, "Input your changes.", updateList.get(position).getRemarks(), "Updates",
+                                final Dialog d2 = Helper.common.dialogYesNoWithMultiLineEditText(activity, "Input your changes.", updateList.get(position1).getRemarks(), "Updates",
                                         "CANCEK", "UPDATE", R.color.lightBlue_400);
                                 Button btnOK = (Button) d2.findViewById(R.id.btn_dialog_yesno_opt2);
                                 Button btnCancel = (Button) d2.findViewById(R.id.btn_dialog_yesno_opt1);
                                 final EditText edtRemarks = (EditText) d2.findViewById(R.id.dialog_edttext);
+
                                 btnCancel.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -213,7 +209,8 @@ public class Activity_ClientUpdates extends FragmentActivity {
                                             Helper.common.toastShort(activity, "You can't leave remarks blank.");
                                         } else {
                                             d2.hide();
-                                            db.updateClientUpdates(updateList.get(position).getId() + "", edtRemarks.getText().toString());
+                                            db.updateClientUpdates(updateList.get(position1).getId() + "", edtRemarks.getText().toString());
+                                            Logging.userAction(activity, context, Logging.ACTION_EDIT, updateList.get(position1).getId() + "", DB_Helper_PetOneCRM.TBL_UPDATES, Logging.TYPE_USER);
                                             adapterClientUpdates.clear();
                                             getClientUpdates();
                                         }
@@ -230,6 +227,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
                                     @Override
                                     public void onClick(View v) {
                                         db.deleteClientUpdateById(updateList.get(position1).getId() + "");
+                                        Logging.userAction(activity, context, Logging.ACTION_DELETE, updateList.get(position1).getId() + "", DB_Helper_PetOneCRM.TBL_UPDATES, Logging.TYPE_USER);
                                         adapterClientUpdates.clear();
                                         getClientUpdates();
                                         d1.hide();
@@ -278,6 +276,8 @@ public class Activity_ClientUpdates extends FragmentActivity {
             }
             showClientUpdates();
         }
+        showEmptyUpdateImage();
+
     }
 
     private void showClientUpdates(){

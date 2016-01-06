@@ -19,6 +19,7 @@ import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
 import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
+import com.santeh.petone.crm.Utils.Logging;
 
 /**
  * Created by rjhonsl on 10/7/2015.
@@ -122,6 +123,8 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
                         d.hide();
                         if (db.deleteClientInfoByID(clientID)) { //deletes client info
                             db.deleteClientUpdatesByClientID(clientID); //deletes associated records
+                            Logging.userAction(activity, context, Logging.ACTION_DELETE, clientID + "", DB_Helper_PetOneCRM.TBL_CLIENTINFO, Logging.TYPE_USER);
+
 
                             Helper.common.toastShort(activity, "Client has been removed.");
                             Intent intent = new Intent(activity, MapsActivity.class);
@@ -176,9 +179,10 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
                     @Override
                     public void onClick(View v) {
 
-
                         db.updateClientInfo(clientID, edtAddress.getText().toString(), edtClientName.getText().toString(), edtCustomerCode.getText().toString(),
                                 edtContactNumber.getText().toString());
+
+                        Logging.userAction(activity, context, Logging.ACTION_EDIT, clientID + "", DB_Helper_PetOneCRM.TBL_CLIENTINFO, Logging.TYPE_USER);
                         finish();
 
                     }

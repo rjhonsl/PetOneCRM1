@@ -13,9 +13,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
 import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
+import com.santeh.petone.crm.Utils.Logging;
 
 /**
  * Created by rjhonsl on 10/7/2015.
@@ -97,8 +99,9 @@ public class Activity_Add_ClientInfo extends FragmentActivity{
                                  intent.putExtra("fromAddClient", "1");
                                  intent.putExtra("latlng", latlng);
                                  String currentDateTime = Helper.timeConvert.longtoDateTime_DB_Format(System.currentTimeMillis());
-                                 db.insertClientInfo(String.valueOf(lat), String.valueOf(lng), edtAddress.getText().toString(), edtClientName.getText().toString(), edtCustomerCode.getText().toString(),
+                                 long rowid = db.insertClientInfo(String.valueOf(lat), String.valueOf(lng), edtAddress.getText().toString(), edtClientName.getText().toString(), edtCustomerCode.getText().toString(),
                                          edtContactNumber.getText().toString(), currentDateTime, Helper.variables.getGlobalVar_currentUserID(activity)+"");
+                                 Logging.userAction(activity, context, Logging.ACTION_ADD, rowid + "", DB_Helper_PetOneCRM.TBL_CLIENTINFO, Logging.TYPE_USER);
 
                                  setResult(MapsActivity.requestCODE_addMarker, intent);
                                  finish();
