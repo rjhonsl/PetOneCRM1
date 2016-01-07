@@ -10,10 +10,10 @@
                 android:radius="2dp"
                 />
             <gradient
-                android:startColor="#b1d7c5"
-                android:endColor="#b1d7c5"
+                android:startColor="@color/gray_400"
+                android:endColor="@color/gray_100"
                 android:type="linear"
-                android:angle="315">
+                android:angle="90">
             </gradient>
         </shape>
     </item>
@@ -44,10 +44,10 @@
                 android:color="#dbd9d1"
                 />
             <gradient
-                android:startColor="#c6fbfaf7"
-                android:endColor="#c6fbfaf7"
+                android:startColor="@color/gray_200"
+                android:endColor="@color/gray_50"
                 android:type="linear"
-                android:angle="315">
+                android:angle="90">
             </gradient>
         </shape>
     </item>
