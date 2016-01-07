@@ -53,8 +53,18 @@
         </activity>
 
         <activity
-            android:name=".Main.Activity_Unsynced_Data"
+            android:name=".Main.Activity_Unsynched_Data"
             android:label="Unsynced Data">
+        </activity>
+
+        <activity
+            android:name=".Main.Activity_Unsynched_ClientInfo"
+            android:label="Unsynced Client Info">
+        </activity>
+
+        <activity
+            android:name=".Main.Activity_Unsynched_ClientUpdates"
+            android:label="Unsynced Client Info">
         </activity>
 
         <activity

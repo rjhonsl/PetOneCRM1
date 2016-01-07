@@ -108,24 +108,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, Activity_Unsynced_Data.class);
+                Intent intent = new Intent(activity, Activity_Unsynched_Data.class);
                 startActivity(intent);
             }
         });
 
-        int unpostedcount =  db.getNotPosted_ClientInfo(activity).getCount() + db.getNotPosted_Updates(activity).getCount();
-        if (unpostedcount > 0){
-            txtTop.setText("You have (" + unpostedcount + ") unsynced data!");
-            txtTop.setVisibility(View.VISIBLE);
-            Animation anim = new AlphaAnimation(0.7f, 1.0f);
-            anim.setDuration(800); //You can manage the blinking time with this parameter
-            anim.setStartOffset(200);
-            anim.setRepeatMode(Animation.REVERSE);
-            anim.setRepeatCount(Animation.INFINITE);
-            txtTop.startAnimation(anim);
-        }else{
-            txtTop.setVisibility(View.GONE);
-        }
+        showSycnState();
 
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,6 +293,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         showAllMarker(googleMap);
+    }
+
+    private void showSycnState() {
+        int unpostedcount =  db.getNotPosted_ClientInfo(activity).getCount() + db.getNotPosted_Updates(activity).getCount();
+        if (unpostedcount > 0){
+            txtTop.setText("You have (" + unpostedcount + ") unsynced data!");
+            txtTop.setVisibility(View.VISIBLE);
+            Animation anim = new AlphaAnimation(0.7f, 1.0f);
+            anim.setDuration(800); //You can manage the blinking time with this parameter
+            anim.setStartOffset(200);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(Animation.INFINITE);
+            txtTop.startAnimation(anim);
+        }else{
+            txtTop.setVisibility(View.GONE);
+        }
     }
 
     private void showAllMarker(GoogleMap googleMap) {
