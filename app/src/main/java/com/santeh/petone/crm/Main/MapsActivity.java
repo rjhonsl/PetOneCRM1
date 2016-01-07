@@ -12,6 +12,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -45,7 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Activity activity;
     Context context;
 
-    TextView txtposition, txtName, txtMaptype, txtExit;
+    TextView txtposition, txtName, txtMaptype, txtExit, txtTop;
     ImageButton btn_AddMarker, btn_closeAddMarker;
     DrawerLayout drawerLayout;
 
@@ -101,7 +103,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_closeAddMarker.setVisibility(View.GONE);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         lvcustomers = (ListView) findViewById(R.id.lv_map_customers);
+        txtTop = (TextView) findViewById(R.id.txtTopTextView);
 
+        txtTop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, Activity_Unsynced_Data.class);
+                startActivity(intent);
+            }
+        });
+
+        int unpostedcount =  db.getNotPosted_ClientInfo(activity).getCount() + db.getNotPosted_Updates(activity).getCount();
+        if (unpostedcount > 0){
+            txtTop.setText("You have (" + unpostedcount + ") unsynced data!");
+            txtTop.setVisibility(View.VISIBLE);
+            Animation anim = new AlphaAnimation(0.7f, 1.0f);
+            anim.setDuration(800); //You can manage the blinking time with this parameter
+            anim.setStartOffset(200);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(Animation.INFINITE);
+            txtTop.startAnimation(anim);
+        }else{
+            txtTop.setVisibility(View.GONE);
+        }
 
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override

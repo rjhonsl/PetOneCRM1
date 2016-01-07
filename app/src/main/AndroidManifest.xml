@@ -44,12 +44,17 @@
 
         <activity
             android:name=".Main.Activity_Add_ClientInfo"
-            android:label="Client Updates">
+            android:label="Client Information">
         </activity>
 
         <activity
             android:name=".Main.Activity_Edit_ClientInfo"
-            android:label="Client Information">
+            android:label="Client Edit Clientinfo">
+        </activity>
+
+        <activity
+            android:name=".Main.Activity_Unsynced_Data"
+            android:label="Unsynced Data">
         </activity>
 
         <activity

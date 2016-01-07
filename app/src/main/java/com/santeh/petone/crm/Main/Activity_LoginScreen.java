@@ -498,6 +498,7 @@ public class Activity_LoginScreen extends Activity{
                                 intent.putExtra("fromActivity", "login");
                                 intent.putExtra("lat",fusedLocation.getLastKnowLocation().latitude+"");
                                 intent.putExtra("long",fusedLocation.getLastKnowLocation().longitude+"");
+                                Logging.userAction(activity, context, Logging.ACTION_LOGIN, Logging.TYPE_USER);
                                 startActivity(intent);
                             }else{
                                 Helper.common.toastLong(activity, "The account you are trying to use is not available for this application.");

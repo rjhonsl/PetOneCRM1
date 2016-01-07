@@ -1,5 +1,6 @@
 package com.santeh.petone.crm.DBase;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -133,6 +134,35 @@ public class DB_Query_PetOneCRM {
 		}
 
 		return isExisting;
+	}
+
+	public Cursor getNotPosted_ClientInfo(Activity activity){
+
+		String query = "SELECT * FROM "+DB_Helper_PetOneCRM.TBL_CLIENTINFO+" WHERE "
+				+ DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted + " = 0 AND "
+				+ DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby + " = " + Helper.variables.getGlobalVar_currentUserID(activity)
+				;
+		String[] params = new String[] {};
+		return db.rawQuery(query, params);
+	}
+
+
+	public Cursor getNotPosted_Updates(Activity activity){
+
+		String query = "SELECT * FROM [SALES.PETONE.CRM.UPDATES] "
+				+ "INNER JOIN [SALES.PETONE.CRM.CLIENTINFO] ON "
+				+ "[SALES.PETONE.CRM.CLIENTINFO].ci_customerId = [SALES.PETONE.CRM.UPDATES].updates_clientid "
+				+ "WHERE [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity);
+		String[] params = new String[] {};
+		return db.rawQuery(query, params);
+	}
+
+	public Cursor getNotPosted_userActivity(Activity activity){
+
+		String query = "SELECT * FROM[SALES.PETONE.CRM.USERS.ACTIVITY] "
+		+ " WHERE [SALES.PETONE.CRM.USERS.ACTIVITY] = "+ Helper.variables.getGlobalVar_currentUserID(activity);
+		String[] params = new String[] {};
+		return db.rawQuery(query, params);
 	}
 
 	public int getUser_Count() {
