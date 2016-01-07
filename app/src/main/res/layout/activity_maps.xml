@@ -22,7 +22,20 @@
         android:layoutDirection="ltr"
         android:animateLayoutChanges="true"
         android:id="@+id/main"
-    >
+        >
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            android:layout_alignParentTop="true"
+            android:padding="10dp"
+            android:id="@+id/txtTopTextView"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_red_box_shadowed"
+            android:text="You have unsynced data!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <ImageButton
             android:padding="8dp"
