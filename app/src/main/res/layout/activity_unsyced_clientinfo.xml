@@ -61,8 +61,8 @@
 
         <ListView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                    android:entries="@array/filler_array"
-            ></ListView>
+                  android:id="@+id/lv_unsycned_clientinfo"
+            />
 
     </LinearLayout>
 
@@ -80,7 +80,7 @@
                   android:layout_gravity="center"
                   android:gravity="center"
                   android:textStyle="bold"
-                  android:text="SYNC ALL  "
+                  android:text="SYNC SELECTED  "
                   android:drawableRight="@drawable/ic_cloud_upload_black_24dp"
                   android:textColor="@color/gray_700"
             />

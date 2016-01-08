@@ -14,5 +14,6 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unsyced_clientupdates);
+
     }
 }

@@ -239,6 +239,7 @@ public class DB_Query_PetOneCRM {
 	}
 
 
+
 	public Cursor getClientByClientID(String clientID){
 		String query = "SELECT * FROM "+ DB_Helper_PetOneCRM.TBL_CLIENTINFO+" WHERE "
 				+ DB_Helper_PetOneCRM.CL_CLIENTINFO_ID + " = ? "

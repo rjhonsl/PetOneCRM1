@@ -81,8 +81,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         db = new DB_Query_PetOneCRM(this);
         db.open();
 
-        List<CustInfoObject> customerList;
-
     }
 
 
@@ -356,10 +354,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
 
                 showAllMarker(mMap);
+                showSycnState();
 
                 String[] latlng = data.getStringArrayExtra("latlng");
                 LatLng ltlg = new LatLng(Double.parseDouble(latlng[0]), Double.parseDouble(latlng[1]));
                 Helper.map.moveCameraAnimate(mMap, ltlg, 18);
+
             }
         }
     }
