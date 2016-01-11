@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:gravity="center_vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingLeft="22dp"
+              android:paddingRight="22dp"
+              android:paddingBottom="12dp"
+              android:paddingTop="12dp"
+    >
+
+    <View android:layout_width="17dp"
+          android:layout_height="17dp"
+          android:layout_gravity="center"
+          android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
+          android:layout_marginRight="0dp"
+        />
+
+    <RelativeLayout android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:gravity="center_vertical"
+                      android:paddingRight="10dp"
+                      android:paddingLeft="10dp">
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:gravity="center_horizontal"
+                          android:layout_gravity="left|center_horizontal"
+                          android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:textSize="15dp"
+                    android:textColor="@color/background_floating_material_dark"
+                    android:text="Juan Dela Cruz"
+                    android:id="@+id/item_clientinfo_name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:text="Dropped a 200 bags of petone dog food."
+                android:textSize="13dp"
+                android:lines="2"
+                android:minLines="2"
+                android:ems="3"
+                android:singleLine="true"
+                android:id="@+id/item_clientinfo_address"
+                android:textColor="@color/gray_500"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <CheckBox android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/chk_upload"
+              android:focusable="false"
+              android:focusableInTouchMode="false"
+        />
+
+
+</LinearLayout>

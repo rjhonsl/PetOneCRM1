@@ -152,7 +152,9 @@ public class DB_Query_PetOneCRM {
 		String query = "SELECT * FROM [SALES.PETONE.CRM.UPDATES] "
 				+ "INNER JOIN [SALES.PETONE.CRM.CLIENTINFO] ON "
 				+ "[SALES.PETONE.CRM.CLIENTINFO].ci_customerId = [SALES.PETONE.CRM.UPDATES].updates_clientid "
-				+ "WHERE [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity);
+				+ "WHERE [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity)  + " "
+				+ "ORDER BY " + DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME + " ASC"
+				;
 		String[] params = new String[] {};
 		return db.rawQuery(query, params);
 	}

@@ -1,17 +1,13 @@
 package com.santeh.petone.crm.Main;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -85,27 +81,27 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                String strClientName, strCustCode, strContactNumber, strAddress, strDateAdded;
-
-                strClientName = clientUpdateList.get(position).getCustomerName();
-                strCustCode = clientUpdateList.get(position).getCustCode();
-                strContactNumber = clientUpdateList.get(position).getContact_number();
-                strAddress = clientUpdateList.get(position).getAddress();
-                strDateAdded = clientUpdateList.get(position).getDateAddedToDB();
-
-                final String compile = "Customer Code:\n" + strCustCode + "\n\n" +
-                        "Client Name:\n" + strClientName + "\n\n" +
-                        "Contact Number:\n" + strContactNumber + "\n\n" +
-                        "Address:\n" + strAddress + "\n\n" +
-                        "Date Added:\n" + Helper.timeConvert.longtoDateTime_StringFormat(Long.parseLong(strDateAdded));
-
-                final Handler handler1 = new Handler();
-                handler1.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Helper.common.dialogThemedOkOnly(activity, "Client Info", compile, "OK", R.color.teal_400);
-                    }
-                }, 250);
+//                String strClientName, strCustCode, strContactNumber, strAddress, strDateAdded;
+//
+//                strClientName = clientUpdateList.get(position).getCustomerName();
+//                strCustCode = clientUpdateList.get(position).getCustCode();
+//                strContactNumber = clientUpdateList.get(position).getContact_number();
+//                strAddress = clientUpdateList.get(position).getAddress();
+//                strDateAdded = clientUpdateList.get(position).getDateAddedToDB();
+//
+//                final String compile = "Customer Code:\n" + strCustCode + "\n\n" +
+//                        "Client Name:\n" + strClientName + "\n\n" +
+//                        "Contact Number:\n" + strContactNumber + "\n\n" +
+//                        "Address:\n" + strAddress + "\n\n" +
+//                        "Date Added:\n" + Helper.timeConvert.longtoDateTime_StringFormat(Long.parseLong(strDateAdded));
+//
+//                final Handler handler1 = new Handler();
+//                handler1.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Helper.common.dialogThemedOkOnly(activity, "Client Info", compile, "OK", R.color.teal_400);
+//                    }
+//                }, 250);
 
 
             }
@@ -114,10 +110,10 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
         lvUnsyncedClientUpdate.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(activity, Activity_Edit_ClientInfo.class);
-                intent.putExtra("activity", Helper.variables.ACTIVITY_UNSYCED_CLIENTINFO);
-                intent.putExtra("id", clientUpdateList.get(position).getCi_id() + "");
-                startActivity(intent);
+//                Intent intent = new Intent(activity, Activity_Edit_ClientInfo.class);
+//                intent.putExtra("activity", Helper.variables.ACTIVITY_UNSYCED_CLIENTINFO);
+//                intent.putExtra("id", clientUpdateList.get(position).getCi_id() + "");
+//                startActivity(intent);
                 return true;
             }
         });
@@ -134,85 +130,86 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
             @Override
             public void onClick(View v) {
 
-                if (clientUpdateList != null){
-                    if (clientUpdateList.size() > 0){
-                        boolean[] checkedPositions = adapter_unsynchedClientUpdates.getCheckedPositions();
-
-                        int selectedidcounter= adapter_unsynchedClientUpdates.getCheckedCount();
-                        final int[] selectedid = new int[selectedidcounter];
-
-                        if (selectedidcounter>0){
-                            String positions = "positions :";
-
-                            int counter = 0;
-                            for (int i = 0; i < checkedPositions.length; i++) {
-                                if (checkedPositions[i]) {
-                                    selectedid[counter] = clientUpdateList.get(i).getCi_id();
-                                    counter++;
-                                }
-                            }
-
-                            final Dialog d = Helper.common.dialogThemedYesNO(activity, "The data you will sync is final and unchangeable. " +
-                                    "Are you sure you want to synch (" + selectedidcounter + ") items on our server? ", "Prompt", "NO", "NO", R.color.red_material_600);
-                            Button btnYes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
-                            Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
-
-                            btnYes.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Sync_clientInfo(db, activity, context, selectedid);
-                                    d.hide();
-                                }
-                            });
-
-                            btnNo.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    d.hide();
-                                }
-                            });
-
-
-
+//                if (clientUpdateList != null){
+//                    if (clientUpdateList.size() > 0){
+//                        boolean[] checkedPositions = adapter_unsynchedClientUpdates.getCheckedPositions();
 //
-//                            Helper.common.dialogThemedOkOnly(activity, "Query",
-////                                    whereSelected,
-//                                    db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedid),
-//                                    "OK", R.color.red);
-//                            Log.d("query", db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedid));
-
-                        }else{
-                            Helper.common.toastShort(activity, "No item selected!");
-                        }
+//                        int selectedidcounter= adapter_unsynchedClientUpdates.getCheckedCount();
+//                        final int[] selectedid = new int[selectedidcounter];
 //
-                    }else{
-                        Helper.common.toastShort(activity, "No item to sync!");
-                    }
-                }else{
-                    Helper.common.toastShort(activity, "No item to sync!");
-                }
+//                        if (selectedidcounter>0){
+//                            String positions = "positions :";
+//
+//                            int counter = 0;
+//                            for (int i = 0; i < checkedPositions.length; i++) {
+//                                if (checkedPositions[i]) {
+//                                    selectedid[counter] = clientUpdateList.get(i).getCi_id();
+//                                    counter++;
+//                                }
+//                            }
+//
+//                            final Dialog d = Helper.common.dialogThemedYesNO(activity, "The data you will sync is final and unchangeable. " +
+//                                    "Are you sure you want to synch (" + selectedidcounter + ") items on our server? ", "Prompt", "NO", "NO", R.color.red_material_600);
+//                            Button btnYes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+//                            Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+//
+//                            btnYes.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    Sync_clientInfo(db, activity, context, selectedid);
+//                                    d.hide();
+//                                }
+//                            });
+//
+//                            btnNo.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    d.hide();
+//                                }
+//                            });
+//
+//
+//
+////
+////                            Helper.common.dialogThemedOkOnly(activity, "Query",
+//////                                    whereSelected,
+////                                    db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedid),
+////                                    "OK", R.color.red);
+////                            Log.d("query", db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedid));
+//
+//                        }else{
+//                            Helper.common.toastShort(activity, "No item selected!");
+//                        }
+////
+//                    }else{
+//                        Helper.common.toastShort(activity, "No item to sync!");
+//                    }
+//                }else{
+//                    Helper.common.toastShort(activity, "No item to sync!");
+//                }
             }
         });
 
     }
 
     private void showAllUnsycnedClientInfo() {
-        Cursor cur = db.getNotPosted_ClientInfo(activity);
+        Cursor cur = db.getNotPosted_Updates(activity);
         if (cur.getCount() > 0) {
             clientUpdateList = new ArrayList<>();
             while (cur.moveToNext()) {
                 CustInfoObject infoobj = new CustInfoObject();
 
+                infoobj.setId(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_ID)));
+                infoobj.setCi_id(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID)));
+                infoobj.setIsPosted(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_isposted)));
+                infoobj.setDateAddedToDB(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED)));
+                infoobj.setRemarks(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_REMARKS)));
+
                 infoobj.setCustomerName(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME)));
-                infoobj.setAddress(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS)));
-                infoobj.setCi_id(cur.getInt(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ID)));
-                infoobj.setContact_number(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER)));
-                infoobj.setCustCode(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE)));
-                infoobj.setDateAddedToDB(cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded)));
 
                 clientUpdateList.add(infoobj);
             }
-            adapter_unsynchedClientUpdates = new Adapter_UnsynchedClientUpdates(context, R.layout.item_lv_unsynced_clientinfo, clientUpdateList);
+            adapter_unsynchedClientUpdates = new Adapter_UnsynchedClientUpdates(context, R.layout.item_lv_unsynced_clientupdate, clientUpdateList);
             lvUnsyncedClientUpdate.setAdapter(adapter_unsynchedClientUpdates);
 
         }

@@ -34,7 +34,8 @@
             android:padding="10dp"
             android:textColor="@color/background_material_light"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            />
 
 
         <ImageButton
@@ -61,8 +62,8 @@
 
         <ListView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                    android:entries="@array/filler_array"
                   android:id="@+id/lv_unsycned_clientupdate"
+
             ></ListView>
 
     </LinearLayout>

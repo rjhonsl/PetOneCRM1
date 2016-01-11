@@ -67,7 +67,7 @@ public class Activity_Unsynched_ClientInfo extends FragmentActivity {
 
         pd = new ProgressDialog(this);
         pd.setIndeterminate(true);
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(true);
 
         btntitleLeft = (ImageButton) findViewById(R.id.btn_title_left);

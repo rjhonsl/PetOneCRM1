@@ -54,7 +54,7 @@ public class Adapter_UnsynchedClientUpdates extends ArrayAdapter<CustInfoObject>
 			Log.d(tag, "if null");
 			holder = new ViewHolder();
 
-			view = inflater.inflate(R.layout.item_lv_unsynced_clientinfo, null);
+			view = inflater.inflate(R.layout.item_lv_unsynced_clientupdate, null);
 
 			holder.txtAddress = (TextView) view.findViewById(R.id.item_clientinfo_address);
 			holder.txtClientName = (TextView) view.findViewById(R.id.item_clientinfo_name);
@@ -77,11 +77,10 @@ public class Adapter_UnsynchedClientUpdates extends ArrayAdapter<CustInfoObject>
 
 
 
-
 		holder.chkPostThis.setChecked(isUpload[position]);
 
 		String clientName = itemList.get(position).getCustomerName();
-		String address = itemList.get(position).getAddress()+"";
+		String address = itemList.get(position).getRemarks()+"";
 
 		holder.txtAddress.setText(address);//reversed this//
 		holder.txtClientName.setText(clientName);
