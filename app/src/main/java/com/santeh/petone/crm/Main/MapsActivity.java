@@ -158,7 +158,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }, 280);
             }
         });
-        txtName.setText(Helper.variables.getGlobalVar_currentUserFirstname(activity) + " " + Helper.variables.getGlobalVar_currentUserLastname(activity));
+        txtName.setText(Helper.variables.getGlobalVar_currentUserFirstname(activity)
+                + " " + Helper.variables.getGlobalVar_currentUserLastname(activity));
         String position = "";
         if (Helper.variables.getGlobalVar_currentLevel(activity) == 0) {
             position = "Admin";

@@ -96,6 +96,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
                 }else{
                     Intent intent = new Intent(context, Activity_Edit_ClientInfo.class);
                     intent.putExtra("id", clientID);
+                    intent.putExtra("activity", Helper.variables.ACTIVITY_CLIENTUPDATES);
                     startActivity(intent);
                 }
 

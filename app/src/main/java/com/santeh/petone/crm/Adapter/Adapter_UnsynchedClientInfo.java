@@ -54,7 +54,7 @@ public class Adapter_UnsynchedClientInfo extends ArrayAdapter<CustInfoObject> {
 			Log.d(tag, "if null");
 			holder = new ViewHolder();
 
-			view = inflater.inflate(R.layout.item_lv_unsynced_clientupdates, null);
+			view = inflater.inflate(R.layout.item_lv_unsynced_clientinfo, null);
 
 			holder.txtAddress = (TextView) view.findViewById(R.id.item_clientinfo_address);
 			holder.txtClientName = (TextView) view.findViewById(R.id.item_clientinfo_name);
@@ -102,6 +102,18 @@ public class Adapter_UnsynchedClientInfo extends ArrayAdapter<CustInfoObject> {
 
 	public boolean[] getCheckedPositions(){
 		return isUpload;
+	}
+
+
+	public int getCheckedCount(){
+		int selectedidcounter = 0;
+		for (int i = 0; i < isUpload.length; i++) {
+			if (isUpload[i]) {
+				selectedidcounter++;
+			}
+		}
+
+		return selectedidcounter;
 	}
 
 	public void selectView(int position, boolean value) {

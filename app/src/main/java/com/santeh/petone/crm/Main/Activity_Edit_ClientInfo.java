@@ -48,6 +48,8 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
     private String strContactNumber;
     private String strAddress;
     private String strDateAdded;
+    private String prevActivity;
+    Intent passedIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +65,10 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
 
         db = new DB_Query_PetOneCRM(this);
         db.open();
+        passedIntent = getIntent();
 
         clientID = "";
+        prevActivity = "";
         if (getIntent().hasExtra("id")){
             clientID = getIntent().getStringExtra("id");
             Cursor cur = db.getClientByClientID(clientID);
@@ -78,6 +82,12 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
                 }
             }
         }
+
+
+        if (getIntent().hasExtra("activity")){
+            prevActivity = getIntent().getStringExtra("activity");
+        }
+
 
 
         Helper.common.hideKeyboardOnLoad(activity);
@@ -125,9 +135,17 @@ public class Activity_Edit_ClientInfo extends FragmentActivity{
                             db.deleteClientUpdatesByClientID(clientID); //deletes associated records
                             Logging.userAction(activity, context, Logging.ACTION_DELETE, clientID + "", DB_Helper_PetOneCRM.TBL_CLIENTINFO, Logging.TYPE_USER);
 
-
+                            Class nextActivity = null;
                             Helper.common.toastShort(activity, "Client has been removed.");
-                            Intent intent = new Intent(activity, MapsActivity.class);
+                            if (prevActivity.equalsIgnoreCase(Helper.variables.ACTIVITY_CLIENTUPDATES+"")){
+                                nextActivity = MapsActivity.class;
+                            }else if (prevActivity.equalsIgnoreCase(Helper.variables.ACTIVITY_UNSYCED_CLIENTINFO+"")){
+                                nextActivity = Activity_Unsynched_ClientInfo.class;
+                            }else{
+                                nextActivity = MapsActivity.class;
+                            }
+
+                            Intent intent = new Intent(activity, nextActivity);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.putExtra("fromActivity", "addcustomerinfo");
                             startActivity(intent);

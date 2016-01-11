@@ -24,6 +24,9 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	public static final String CL_CLIENTINFO_dateAdded 	= "ci_dateAdded";
 	public static final String CL_CLIENTINFO_addedby 	= "ci_addedby";
 	public static final String CL_CLIENTINFO_IsPosted 	= "ci_isposted";
+
+	public static final String CL_CLIENTINFO_localid 	= "ci_local_id";
+
 	public static final String[] ALL_KEY_fARM			= new String[]{CL_CLIENTINFO_ID, CL_CLIENTINFO_LAT, CL_CLIENTINFO_LNG, CL_CLIENTINFO_ADDRESS, CL_CLIENTINFO_CLIENT_NAME,
 	CL_CLIENTINFO_CUSTCODE, CL_CLIENTINFO_C_NUMBER, CL_CLIENTINFO_dateAdded, CL_CLIENTINFO_addedby, CL_CLIENTINFO_IsPosted};
 

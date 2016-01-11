@@ -80,6 +80,7 @@ public class CustInfoObject {
 	private int isPetOne_active;
 
 	private String customerID;
+	private String custCode;
 	private String mainCustomerId;
 	private String specie;
 	private String culturesystem;
@@ -880,5 +881,13 @@ public class CustInfoObject {
 
 	public void setIsPetOne_active(int isPetOne_active) {
 		this.isPetOne_active = isPetOne_active;
+	}
+
+	public String getCustCode() {
+		return custCode;
+	}
+
+	public void setCustCode(String custCode) {
+		this.custCode = custCode;
 	}
 }

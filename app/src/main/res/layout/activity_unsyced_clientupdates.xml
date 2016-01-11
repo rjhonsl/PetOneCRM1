@@ -62,6 +62,7 @@
         <ListView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                     android:entries="@array/filler_array"
+                  android:id="@+id/lv_unsycned_clientupdate"
             ></ListView>
 
     </LinearLayout>

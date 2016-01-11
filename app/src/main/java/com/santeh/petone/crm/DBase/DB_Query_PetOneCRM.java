@@ -276,6 +276,92 @@ public class DB_Query_PetOneCRM {
 
 
 
+	public String getSQLStringForInsert_UNPOSTED_CustomerINFO(Activity activity, int[] selectedID) {
+
+
+		String whereSelected = "";
+		for (int i = 0; i < selectedID.length; i++) {
+			String condition = "OR";
+			if (selectedID.length-1 == i) {
+				condition = "AND";
+			}else{
+				condition = "OR";
+			}
+			whereSelected = whereSelected +  DB_Helper_PetOneCRM.CL_CLIENTINFO_ID + " = "+ selectedID[i] + " " + condition + " ";
+		}
+
+
+		String sqlString = "" +
+				"INSERT INTO `"+Helper.random.trimFirstAndLast(DB_Helper_PetOneCRM.TBL_CLIENTINFO)+"` " +
+				"(`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_ID +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_LAT +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_LNG +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_CLIENTINFO_localid+"`)  VALUES ";
+
+
+		String query = "SELECT * FROM " + DB_Helper_PetOneCRM.TBL_CLIENTINFO + " WHERE "
+				+ whereSelected
+				+ DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted + " = 0 AND " +
+				DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby + " = " + Helper.variables.getGlobalVar_currentUserID(activity);
+
+
+		String[] params = new String[]{};
+		Cursor cur = db.rawQuery(query, null);
+		String ci_id="", ci_lat="", ci_long="", ci_address="", ci_clientName="", ci_custcode="", ci_contactNumber="", ci_dateadded="", ci_addedby="", ci_localid="";
+		if (cur.getCount() > 0) {
+			while (cur.moveToNext()) {
+				ci_id = Helper.variables.getGlobalVar_currentUserID(activity) + "-" + cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ID)).replaceAll("'", "\\'");
+				ci_lat = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_LAT)).replaceAll("'", "\\'");
+				ci_long = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_LNG)).replaceAll("'", "\\'");
+				ci_address = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS)).replaceAll("'", "\\'");
+				ci_clientName = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME)).replaceAll("'", "\\'");
+				ci_custcode = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE)).replaceAll("'", "\\'");
+				ci_contactNumber = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER)).replaceAll("'", "\\'");
+				ci_dateadded = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded)).replaceAll("'", "\\'");
+				ci_addedby = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby)).replaceAll("'", "\\'");
+				ci_localid = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ID)).replaceAll("'", "\\'");
+
+				sqlString = sqlString +
+						"( '"+ci_id+"',  " +
+						"'"+ci_lat+"',  " +
+						"'"+ci_long+"',  " +
+						"'"+ci_address+"',  " +
+						"'"+ci_clientName+"',  " +
+						"'"+ci_custcode+"',  " +
+						"'"+ci_contactNumber+"',  " +
+						"'"+ci_dateadded+"',  " +
+						"'"+ci_addedby+"',  " +
+						"'"+ci_localid+"' ),";
+			}
+		}
+
+		String strSql = sqlString.substring(0, sqlString.length() - 1);
+		strSql = strSql + " " +
+				" ON DUPLICATE KEY UPDATE " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_ID+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_ID+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_LAT+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_LAT+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_LNG+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_LNG+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_localid+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_localid+")"
+				;
+
+		return strSql;
+	}
+
+
+
+
 	/********************************************
 	 * 				DELETES						*
 	 ********************************************/
@@ -338,6 +424,32 @@ public class DB_Query_PetOneCRM {
 		newValues.put(DB_Helper_PetOneCRM.CL_USERS_dateAdded, dateAdded);
 		return 	db.update(DB_Helper_PetOneCRM.TBL_USERS, newValues, where, null);
 	}
+
+	public int updateUnPostedToPosted_BySelectedItems_CLIENTINFO(Activity activity, int[] selectedID) {
+
+		String whereSelected = "";
+		for (int i = 0; i < selectedID.length; i++) {
+			String condition = "OR";
+			if (selectedID.length-1 == i) {
+				condition = "AND";
+			}else{
+				condition = "OR";
+			}
+			whereSelected = whereSelected +  DB_Helper_PetOneCRM.CL_CLIENTINFO_ID + " = "+ selectedID[i] + " " + condition + " ";
+		}
+
+		String where = whereSelected + DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted + " = 0 AND "
+				+ DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby + " = " + Helper.variables.getGlobalVar_currentUserID(activity)
+				;
+
+		ContentValues newValues = new ContentValues();
+		newValues.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted, 1);
+
+		return 	db.update(DB_Helper_PetOneCRM.TBL_CLIENTINFO, newValues, where, null);
+	}
+
+
+
 
 
 

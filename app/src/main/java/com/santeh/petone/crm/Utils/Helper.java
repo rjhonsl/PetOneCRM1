@@ -14,6 +14,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,14 @@ public class Helper {
 
 
         public static String URL_LOGIN                                  = sourceAddress_goDaddy + "login.php";
+        public static String URL_PHP_RAW_QUERY_POST_INSERT              = sourceAddress_goDaddy + "insertSyncFarmInfo.php";
+
+        public static String ACTIVITY_CLIENTUPDATES = "updates";
+        public static String ACTIVITY_UNSYCED_CLIENTINFO = "unsyced_clientinfo";
+        public static String ACTIVITY_UNSYCED_CLIENT_UPDATES = "unsyced_clientupdates";
+        public static String ACTIVITY_MapsActivity = "mapsactivity";
+
+
 
         public static void setGlobalVar_currentUserID(int ID, Activity activity){
             ((Var) activity.getApplication()).setCurrentuser(ID);
@@ -398,6 +407,7 @@ public class Helper {
                     d.hide();
                 }
             });
+            txtprompt.setMovementMethod(new ScrollingMovementMethod());
             txttitle.setBackground(activity.getResources().getDrawable(resIdColor));
             txtok.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -480,6 +490,12 @@ public class Helper {
             return  PD;
         }
 
+        public static String trimFirstAndLast(String string){
+            String trimmed = "";
+
+            trimmed = string.substring(1,string.length() );
+            return  trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
 
 
 
