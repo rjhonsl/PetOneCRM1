@@ -152,7 +152,7 @@ public class Activity_Unsynched_ClientInfo extends FragmentActivity {
                             }
 
                             final Dialog d = Helper.common.dialogThemedYesNO(activity, "The data you will sync is final and unchangeable. " +
-                                    "Are you sure you want to synch (" + selectedidcounter + ") items on our server? ", "Prompt", "NO", "NO", R.color.red_material_600);
+                                    "\n\nAre you sure you want to sync (" + selectedidcounter + ") items on our server?", "Prompt", "NO", "YES", R.color.red_material_600);
                             Button btnYes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
                             Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
 

@@ -1,13 +1,17 @@
 package com.santeh.petone.crm.Main;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -64,7 +68,7 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
 
         pd = new ProgressDialog(this);
         pd.setIndeterminate(true);
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(true);
 
         btntitleLeft = (ImageButton) findViewById(R.id.btn_title_left);
@@ -109,11 +113,33 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
 
         lvUnsyncedClientUpdate.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(activity, Activity_Edit_ClientInfo.class);
-//                intent.putExtra("activity", Helper.variables.ACTIVITY_UNSYCED_CLIENTINFO);
-//                intent.putExtra("id", clientUpdateList.get(position).getCi_id() + "");
-//                startActivity(intent);
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final Dialog d = Helper.common.dialogYesNoWithMultiLineEditText(activity, "Enter new remark", clientUpdateList.get(position).getRemarks(), "Edit", "CANCEL", "OK", R.color.red_material_600);
+                final EditText editText = (EditText) d.findViewById(R.id.dialog_edttext);
+                Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+                Button btnYes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        db.updateClientUpdates(clientUpdateList.get(position).getId() + "", editText.getText().toString());
+                        d.hide();
+
+                        refreshListView();
+                        lvUnsyncedClientUpdate.smoothScrollToPosition(position);
+
+
+                    }
+                });
+
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.hide();
+                    }
+                });
+
+
                 return true;
             }
         });
@@ -130,64 +156,81 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
             @Override
             public void onClick(View v) {
 
-//                if (clientUpdateList != null){
-//                    if (clientUpdateList.size() > 0){
-//                        boolean[] checkedPositions = adapter_unsynchedClientUpdates.getCheckedPositions();
-//
-//                        int selectedidcounter= adapter_unsynchedClientUpdates.getCheckedCount();
-//                        final int[] selectedid = new int[selectedidcounter];
-//
-//                        if (selectedidcounter>0){
-//                            String positions = "positions :";
-//
-//                            int counter = 0;
-//                            for (int i = 0; i < checkedPositions.length; i++) {
-//                                if (checkedPositions[i]) {
-//                                    selectedid[counter] = clientUpdateList.get(i).getCi_id();
-//                                    counter++;
+                if (clientUpdateList != null){
+                    if (clientUpdateList.size() > 0){
+                        boolean[] checkedPositions = adapter_unsynchedClientUpdates.getCheckedPositions();
+
+                        int selectedidcounter= adapter_unsynchedClientUpdates.getCheckedCount();
+                        final int[] selectedid = new int[selectedidcounter];
+
+                        if (selectedidcounter>0){
+                            String positions = "positions :";
+
+                            int counter = 0;
+                            for (int i = 0; i < checkedPositions.length; i++) {
+                                if (checkedPositions[i]) {
+                                    selectedid[counter] = clientUpdateList.get(i).getId();
+                                    counter++;
+                                }
+                            }
+
+
+
+
+                            final Dialog d = Helper.common.dialogThemedYesNO(activity,
+                                    "The data you will sync is final and unchangeable. " +
+                                    "\n\n"+
+                                    "Are you sure you want to sync (" + selectedidcounter + ") items on our server? ", "Prompt", "NO", "YES", R.color.red_material_600);
+                            Button btnYes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                            Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+
+                            btnYes.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Sync_clientInfo(db, activity, context, selectedid);
+                                    d.hide();
+                                }
+                            });
+
+                            btnNo.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    d.hide();
+                                }
+                            });
+
+
+
+//                            String whereSelected = "";
+//                            for (int i = 0; i < selectedid.length; i++) {
+//                                String condition = "OR";
+//                                if (selectedid.length-1 == i) {
+//                                    condition = "AND";
+//                                }else{
+//                                    condition = "OR";
 //                                }
+//                                whereSelected = whereSelected +  DB_Helper_PetOneCRM.CL_UPDATES_ID + " = "+ selectedid[i] + " " + condition + " ";
 //                            }
+
+//                            Helper.common.dialogThemedOkOnly(activity, "Query",
+////                                    whereSelected,
+//                                    db.getSQLStringForInsert_UNPOSTED_CustomerUPDATES(activity, selectedid),
+//                                    "OK", R.color.red);
+////                            Log.d("query", db.getSQLStringForInsert_UNPOSTED_CustomerUPDATES(activity, selectedid));
+
+                        }else{
+                            Helper.common.toastShort(activity, "No item selected!");
+                        }
 //
-//                            final Dialog d = Helper.common.dialogThemedYesNO(activity, "The data you will sync is final and unchangeable. " +
-//                                    "Are you sure you want to synch (" + selectedidcounter + ") items on our server? ", "Prompt", "NO", "NO", R.color.red_material_600);
-//                            Button btnYes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
-//                            Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
-//
-//                            btnYes.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    Sync_clientInfo(db, activity, context, selectedid);
-//                                    d.hide();
-//                                }
-//                            });
-//
-//                            btnNo.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    d.hide();
-//                                }
-//                            });
-//
-//
-//
-////
-////                            Helper.common.dialogThemedOkOnly(activity, "Query",
-//////                                    whereSelected,
-////                                    db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedid),
-////                                    "OK", R.color.red);
-////                            Log.d("query", db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedid));
-//
-//                        }else{
-//                            Helper.common.toastShort(activity, "No item selected!");
-//                        }
-////
-//                    }else{
-//                        Helper.common.toastShort(activity, "No item to sync!");
-//                    }
-//                }else{
-//                    Helper.common.toastShort(activity, "No item to sync!");
-//                }
+                    }else{
+                        Helper.common.toastShort(activity, "No item to sync!");
+                    }
+                }else{
+                    Helper.common.toastShort(activity, "No item to sync!");
+                }
             }
+
+
         });
 
     }
@@ -239,15 +282,11 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
                     public void onResponse(final String response) {
                         if (!response.substring(1, 2).equalsIgnoreCase("0")) {
 //                                startSynchingDB_PondInfo();
-                            db.updateUnPostedToPosted_BySelectedItems_CLIENTINFO(activity, selectedID);
+                            db.updateUnPostedToPosted_BySelectedItems_CLIENTUPDATES(activity, selectedID);
 
-                            if (adapter_unsynchedClientUpdates !=null){
-                                adapter_unsynchedClientUpdates.clear();
-                            }
-                            Helper.common.toastShort(activity, "Sync Success");
-                            showAllUnsycnedClientInfo();
+                            refreshListView();
                             pd.hide();
-
+                            Helper.common.toastShort(activity, "Sync Success");
 
                         } else {
                             Helper.common.toastShort(activity, "SYNC INTERRUPTED. Please try again");
@@ -258,7 +297,7 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Helper.common.toastShort(activity, "SYNC INTERRUPTED. Please try syncing again.");
+                        Helper.common.toastShort(activity, "SYNC INTERRUPTED. "+ error.toString() );
                         pd.hide();
                     }
                 }) {
@@ -271,7 +310,9 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
                 params.put("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
                 params.put("userlvl", Helper.variables.getGlobalVar_currentLevel(activity) + "");
 
-                params.put("sql", db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedID) + "");
+                String qquery = db.getSQLStringForInsert_UNPOSTED_CustomerUPDATES(activity, selectedID) + "";
+                params.put("sql",qquery );
+                Log.d("query2", qquery);
 
                 return params;
             }
@@ -279,5 +320,12 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
 
         MyVolleyAPI api = new MyVolleyAPI();
         api.addToReqQueue(postRequest, context);
+    }
+
+    private void refreshListView() {
+        if (adapter_unsynchedClientUpdates !=null){
+            adapter_unsynchedClientUpdates.clear();
+        }
+        showAllUnsycnedClientInfo();
     }
 }

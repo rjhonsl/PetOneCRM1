@@ -38,6 +38,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	public static final String CL_UPDATES_CLIENTID 			= "updates_clientid";
 	public static final String CL_UPDATES_DATEADDED 		= "updates_dateAdded";
 	public static final String CL_UPDATES_isposted 			= "updates_isposted";
+	public static final String CL_UPDATES_localID 			= "updates_local_id";
 	public static final String[] ALL_KEY_WEEKLY_UPDATES		= new String[]{CL_UPDATES_ID, CL_UPDATES_REMARKS, CL_UPDATES_CLIENTID,
 			CL_UPDATES_DATEADDED, CL_UPDATES_isposted};
 

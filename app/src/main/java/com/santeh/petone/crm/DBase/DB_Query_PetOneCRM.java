@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.santeh.petone.crm.Utils.Helper;
 
@@ -152,7 +153,8 @@ public class DB_Query_PetOneCRM {
 		String query = "SELECT * FROM [SALES.PETONE.CRM.UPDATES] "
 				+ "INNER JOIN [SALES.PETONE.CRM.CLIENTINFO] ON "
 				+ "[SALES.PETONE.CRM.CLIENTINFO].ci_customerId = [SALES.PETONE.CRM.UPDATES].updates_clientid "
-				+ "WHERE [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity)  + " "
+				+ "WHERE [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity)  + " AND "
+				+ DB_Helper_PetOneCRM.CL_UPDATES_isposted + " = 0 "
 				+ "ORDER BY " + DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME + " ASC"
 				;
 		String[] params = new String[] {};
@@ -356,7 +358,92 @@ public class DB_Query_PetOneCRM {
 				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded+"), " +
 				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby+"), " +
 				" 	 "+DB_Helper_PetOneCRM.CL_CLIENTINFO_localid+" = VALUES("+DB_Helper_PetOneCRM.CL_CLIENTINFO_localid+")"
+		;
+
+		return strSql;
+	}
+
+
+
+	public String getSQLStringForInsert_UNPOSTED_CustomerUPDATES(Activity activity, int[] selectedID) {
+
+
+		String whereSelected = "";
+		for (int i = 0; i < selectedID.length; i++) {
+			String condition = "OR";
+			if (selectedID.length-1 == i) {
+				condition = "AND";
+			}else{
+				condition = "OR";
+			}
+			whereSelected = whereSelected +  DB_Helper_PetOneCRM.CL_UPDATES_ID + " = "+ selectedID[i] + " " + condition + " ";
+		}
+
+		String sqlString = "" +
+				"INSERT INTO `"+Helper.random.trimFirstAndLast(DB_Helper_PetOneCRM.TBL_UPDATES)+"` " +
+				"(`"+ DB_Helper_PetOneCRM.CL_UPDATES_ID +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_UPDATES_REMARKS +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_UPDATES_localID+"`)  VALUES ";
+
+
+		String query = "SELECT * FROM [SALES.PETONE.CRM.UPDATES] "
+				+ "INNER JOIN [SALES.PETONE.CRM.CLIENTINFO] ON "
+				+ "[SALES.PETONE.CRM.CLIENTINFO].ci_customerId = [SALES.PETONE.CRM.UPDATES].updates_clientid "
+				+ "WHERE "
+				+ whereSelected
+				+ " [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity)
+				+ " "
+//				+ "ORDER BY " + DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME + " ASC"
 				;
+
+
+		Log.d("query", query);
+
+
+		String[] params = new String[]{};
+		Cursor cur = db.rawQuery(query, null);
+		String upd_id= "", upd_remarks="", upd_clientid="", upd_dateAdded="", upd_localid="";
+
+		Log.d("query", "before if");
+		if (cur != null) {
+			Log.d("query", "before if not null");
+			if (cur.getCount() > 0) {
+				Log.d("query", "before if not zero " + cur.getCount());
+				while (cur.moveToNext()) {
+					Log.d("query", "before up_id");
+					upd_id = Helper.variables.getGlobalVar_currentUserID(activity) + "-" + cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_ID)).replaceAll("'", "\\'");
+					Log.d("query", "before remarks");
+					upd_remarks = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_REMARKS)).replaceAll("'", "\\'");
+					Log.d("query", "before upd_clientid");
+					upd_clientid = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID)).replaceAll("'", "\\'");
+					Log.d("query", "before dateadded");
+					upd_dateAdded = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED)).replaceAll("'", "\\'");
+					Log.d("query", "before localid");
+					upd_localid = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_ID)).replaceAll("'", "\\'");
+
+					sqlString = sqlString +
+							"( '"+upd_id+"',  " +
+							"'"+upd_remarks+"',  " +
+							"'"+upd_clientid+"',  " +
+							"'"+upd_dateAdded+"',  " +
+							"'"+upd_localid+"' ),";
+				}
+			}
+		}
+
+		Log.d("query", "after conditions");
+
+		String strSql = sqlString.substring(0, sqlString.length() - 1);
+		strSql = strSql + " " +
+				" ON DUPLICATE KEY UPDATE " +
+				" 	 "+DB_Helper_PetOneCRM.CL_UPDATES_ID+" = VALUES("+DB_Helper_PetOneCRM.CL_UPDATES_ID+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_UPDATES_REMARKS+" = VALUES("+DB_Helper_PetOneCRM.CL_UPDATES_REMARKS+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID+" = VALUES("+DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED+" = VALUES("+DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_UPDATES_localID+" = VALUES("+DB_Helper_PetOneCRM.CL_UPDATES_localID+")"
+		;
 
 		return strSql;
 	}
@@ -448,6 +535,29 @@ public class DB_Query_PetOneCRM {
 		newValues.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted, 1);
 
 		return 	db.update(DB_Helper_PetOneCRM.TBL_CLIENTINFO, newValues, where, null);
+	}
+
+
+	public int updateUnPostedToPosted_BySelectedItems_CLIENTUPDATES(Activity activity, int[] selectedID) {
+
+		String whereSelected = "";
+		for (int i = 0; i < selectedID.length; i++) {
+			String condition = "OR";
+			if (selectedID.length-1 == i) {
+				condition = "";
+			}else{
+				condition = "OR";
+			}
+			whereSelected = whereSelected +  DB_Helper_PetOneCRM.CL_UPDATES_ID + " = "+ selectedID[i] + " " + condition + " ";
+		}
+
+		String where = whereSelected
+				;
+
+		ContentValues newValues = new ContentValues();
+		newValues.put(DB_Helper_PetOneCRM.CL_UPDATES_isposted, 1);
+
+		return 	db.update(DB_Helper_PetOneCRM.TBL_UPDATES, newValues, where, null);
 	}
 
 

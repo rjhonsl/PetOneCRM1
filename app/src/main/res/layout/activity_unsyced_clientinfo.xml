@@ -80,7 +80,7 @@
                   android:layout_gravity="center"
                   android:gravity="center"
                   android:textStyle="bold"
-                  android:text="SYNC SELECTED  "
+                  android:text="SYNC SELECTED ITEMS  "
                   android:drawableRight="@drawable/ic_cloud_upload_black_24dp"
                   android:textColor="@color/gray_700"
             />
