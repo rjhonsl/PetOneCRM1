@@ -64,7 +64,12 @@
 
         <activity
             android:name=".Main.Activity_Unsynched_ClientUpdates"
-            android:label="Unsynced Client Info">
+            android:label="Unsynced Client Updates">
+        </activity>
+
+        <activity
+            android:name=".Main.Activity_Settings"
+            android:label="Settings">
         </activity>
 
         <activity

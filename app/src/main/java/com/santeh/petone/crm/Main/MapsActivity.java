@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Activity activity;
     Context context;
 
-    TextView txtposition, txtName, txtMaptype, txtExit, txtTop;
+    TextView txtposition, txtName, txtMaptype, txtExit, txtTop, txtSettings;
     ImageButton btn_AddMarker, btn_closeAddMarker;
     DrawerLayout drawerLayout;
 
@@ -98,11 +99,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtposition = (TextView) findViewById(R.id.txt_position);
         txtMaptype = (TextView) findViewById(R.id.txt_maptype);
         txtExit = (TextView) findViewById(R.id.txt_exit);
+        txtSettings = (TextView) findViewById(R.id.txt_settings);
         btn_closeAddMarker.setVisibility(View.GONE);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         lvcustomers = (ListView) findViewById(R.id.lv_map_customers);
-        txtTop = (TextView) findViewById(R.id.txtTopTextView);
 
+        txtTop = (TextView) findViewById(R.id.txtTopTextView);
         txtTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,12 +122,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        txtSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeDrawer();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(activity, Activity_Settings.class);
+                        startActivity(intent);
+                    }
+                }, 280);
+            }
+        });
+
         txtMaptype.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 closeDrawer();
-
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -296,16 +311,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showSycnState() {
         int unpostedcount =  db.getNotPosted_ClientInfo(activity).getCount() + db.getNotPosted_Updates(activity).getCount();
+        Log.d("sync", "getting sync coundt: " + unpostedcount);
         if (unpostedcount > 0){
             txtTop.setText("You have (" + unpostedcount + ") unsynced data!");
             txtTop.setVisibility(View.VISIBLE);
             Animation anim = new AlphaAnimation(0.7f, 1.0f);
-            anim.setDuration(800); //You can manage the blinking time with this parameter
-            anim.setStartOffset(200);
+            anim.setDuration(600); //You can manage the blinking time with this parameter
+            anim.setStartOffset(500);
             anim.setRepeatMode(Animation.REVERSE);
             anim.setRepeatCount(Animation.INFINITE);
             txtTop.startAnimation(anim);
         }else{
+            txtTop.clearAnimation();
             txtTop.setVisibility(View.GONE);
         }
     }
@@ -385,6 +402,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
         db.open();
+
+        txtTop = (TextView) findViewById(R.id.txtTopTextView);
+        showSycnState();
     }
 
     @Override

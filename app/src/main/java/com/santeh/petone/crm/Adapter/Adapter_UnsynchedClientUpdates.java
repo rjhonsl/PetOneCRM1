@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.R;
+import com.santeh.petone.crm.Utils.Helper;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class Adapter_UnsynchedClientUpdates extends ArrayAdapter<CustInfoObject>
 	private class ViewHolder {
 		TextView txtClientName;
 		TextView txtAddress;
+		TextView txtDate;
 		CheckBox chkPostThis;
 	}
 
@@ -59,6 +61,7 @@ public class Adapter_UnsynchedClientUpdates extends ArrayAdapter<CustInfoObject>
 			holder.txtAddress = (TextView) view.findViewById(R.id.item_clientinfo_address);
 			holder.txtClientName = (TextView) view.findViewById(R.id.item_clientinfo_name);
 			holder.chkPostThis = (CheckBox) view.findViewById(R.id.chk_upload);
+			holder.txtDate = (TextView) view.findViewById(R.id.item_clientupdates_date);
 			isUpload[position] = false;
 			view.setTag(holder);
 		}
@@ -81,9 +84,11 @@ public class Adapter_UnsynchedClientUpdates extends ArrayAdapter<CustInfoObject>
 
 		String clientName = itemList.get(position).getCustomerName();
 		String address = itemList.get(position).getRemarks()+"";
+		String date = Helper.timeConvert.longtoDate_ShortenedStringFormat(Long.parseLong(itemList.get(position).getDateAddedToDB()));
 
 		holder.txtAddress.setText(address);//reversed this//
 		holder.txtClientName.setText(clientName);
+		holder.txtDate.setText(date);
 
 
 		return view;

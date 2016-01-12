@@ -186,6 +186,13 @@ public class Helper {
             return formatter.format(calendar.getTime());
         }
 
+        public static String longtoDate_ShortenedStringFormat(long dateInMillis){
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM d");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateInMillis);
+            return formatter.format(calendar.getTime());
+        }
+
     }
 
 

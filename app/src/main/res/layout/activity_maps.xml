@@ -161,6 +161,20 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:text="  Settings"
+            android:textSize="15sp"
+            android:textColor="@color/gray_600"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:id="@+id/txt_settings"
+            android:background="@drawable/bg_material_transparent_gray_pressed"
+            android:drawableLeft="@drawable/ic_setting_light"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
             android:text="  Exit App"
             android:textSize="15sp"
             android:textColor="@color/gray_600"
