@@ -54,6 +54,7 @@ public class Helper {
 
         public static String URL_LOGIN                                  = sourceAddress_goDaddy + "login.php";
         public static String URL_PHP_RAW_QUERY_POST_INSERT              = sourceAddress_goDaddy + "insertSyncFarmInfo.php";
+        public static String URL_SELECT_CLIENTINFO_BY_USERID            = sourceAddress_goDaddy + "petone_select_clientinfo_by_userid.php";
 
         public static String ACTIVITY_CLIENTUPDATES = "updates";
         public static String ACTIVITY_UNSYCED_CLIENTINFO = "unsyced_clientinfo";
