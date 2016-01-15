@@ -80,37 +80,6 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
         showAllUnsycnedClientInfo();
 
 
-
-        lvUnsyncedClientUpdate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
-//                String strClientName, strCustCode, strContactNumber, strAddress, strDateAdded;
-//
-//                strClientName = clientUpdateList.get(position).getCustomerName();
-//                strCustCode = clientUpdateList.get(position).getCustCode();
-//                strContactNumber = clientUpdateList.get(position).getContact_number();
-//                strAddress = clientUpdateList.get(position).getAddress();
-//                strDateAdded = clientUpdateList.get(position).getDateAddedToDB();
-//
-//                final String compile = "Customer Code:\n" + strCustCode + "\n\n" +
-//                        "Client Name:\n" + strClientName + "\n\n" +
-//                        "Contact Number:\n" + strContactNumber + "\n\n" +
-//                        "Address:\n" + strAddress + "\n\n" +
-//                        "Date Added:\n" + Helper.timeConvert.longtoDateTime_StringFormat(Long.parseLong(strDateAdded));
-//
-//                final Handler handler1 = new Handler();
-//                handler1.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Helper.common.dialogThemedOkOnly(activity, "Client Info", compile, "OK", R.color.teal_400);
-//                    }
-//                }, 250);
-
-
-            }
-        });
-
         lvUnsyncedClientUpdate.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -187,7 +156,7 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
                             btnYes.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Sync_clientInfo(db, activity, context, selectedid);
+                                    Sync_clientUpdate(db, activity, context, selectedid);
                                     d.hide();
                                 }
                             });
@@ -272,7 +241,7 @@ public class Activity_Unsynched_ClientUpdates extends FragmentActivity {
 
 
 
-    private void Sync_clientInfo(final DB_Query_PetOneCRM db, final Activity activity, final Context context, final int[] selectedID) {
+    private void Sync_clientUpdate(final DB_Query_PetOneCRM db, final Activity activity, final Context context, final int[] selectedID) {
 
         pd.setMessage("Syncing...");
         pd.show();

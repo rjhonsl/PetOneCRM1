@@ -49,17 +49,18 @@ public class Helper {
 
     public static class variables{
 
-        public static String sourceAddress_goDaddy                  = "http://santeh-webservice.com/php/android_json_post/";
+        public static String sourceAddress_goDaddy              = "http://santeh-webservice.com/php/android_json_post/";
 
 
         public static String URL_LOGIN                                  = sourceAddress_goDaddy + "login.php";
         public static String URL_PHP_RAW_QUERY_POST_INSERT              = sourceAddress_goDaddy + "insertSyncFarmInfo.php";
         public static String URL_SELECT_CLIENTINFO_BY_USERID            = sourceAddress_goDaddy + "petone_select_clientinfo_by_userid.php";
+        public static String URL_SELECT_CLIENTUPDATE_BY_USERID          = sourceAddress_goDaddy + "petone_select_clientupdate_by_userid.php";
 
-        public static String ACTIVITY_CLIENTUPDATES = "updates";
-        public static String ACTIVITY_UNSYCED_CLIENTINFO = "unsyced_clientinfo";
-        public static String ACTIVITY_UNSYCED_CLIENT_UPDATES = "unsyced_clientupdates";
-        public static String ACTIVITY_MapsActivity = "mapsactivity";
+        public static String ACTIVITY_CLIENTUPDATES             = "updates";
+        public static String ACTIVITY_UNSYCED_CLIENTINFO        = "unsyced_clientinfo";
+        public static String ACTIVITY_UNSYCED_CLIENT_UPDATES    = "unsyced_clientupdates";
+        public static String ACTIVITY_MapsActivity              = "mapsactivity";
 
 
 

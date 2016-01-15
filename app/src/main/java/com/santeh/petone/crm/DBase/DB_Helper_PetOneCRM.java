@@ -68,6 +68,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	public static final String CL_USER_ACTIVITY_DATETIME	= "user_act_datetime";
 	public static final String CL_USER_ACTIVITY_ACTIONTYPE	= "user_act_actiontype";
 	public static final String CL_USER_ACTIVITY_isPosted	= "user_act_isposted";
+	public static final String CL_USER_ACTIVITY_localID		= "user_act_local_id";
 	public static final String[] ALL_KEY_USERACTIVITY		= new String[]{CL_USER_ACTIVITY_ID, CL_USER_ACTIVITY_USERID, CL_USER_ACTIVITY_ACTIONDONE,
 			CL_USER_ACTIVITY_LAT, CL_USER_ACTIVITY_LNG, CL_USER_ACTIVITY_DATETIME, CL_USER_ACTIVITY_ACTIONTYPE, CL_USER_ACTIVITY_isPosted};
 

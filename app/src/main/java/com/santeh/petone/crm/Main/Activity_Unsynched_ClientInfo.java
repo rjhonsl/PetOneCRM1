@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -248,6 +249,7 @@ public class Activity_Unsynched_ClientInfo extends FragmentActivity {
                             }
                             Helper.common.toastShort(activity, "Sync Success");
                             showAllUnsycnedClientInfo();
+                            sync_activities();
                             pd.hide();
 
 
@@ -274,6 +276,47 @@ public class Activity_Unsynched_ClientInfo extends FragmentActivity {
                 params.put("userlvl", Helper.variables.getGlobalVar_currentLevel(activity) + "");
 
                 params.put("sql", db.getSQLStringForInsert_UNPOSTED_CustomerINFO(activity, selectedID) + "");
+
+                return params;
+            }
+        };
+
+        MyVolleyAPI api = new MyVolleyAPI();
+        api.addToReqQueue(postRequest, context);
+    }
+
+
+    private void sync_activities() {
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, Helper.variables.URL_PHP_RAW_QUERY_POST_INSERT,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(final String response) {
+                        if (!response.substring(1, 2).equalsIgnoreCase("0")) {
+//                                startSynchingDB_PondInfo();
+                            db.updateUnPostedToPosted_All_userActivities();
+                            Log.d("sync activities", "success");
+                        } else {
+                            Log.d("sync activities", "failed with reply from server: "+response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("sync activities", "failed with local error");
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", Helper.variables.getGlobalVar_currentUserName(activity));
+                params.put("password", Helper.variables.getGlobalVar_currentUserPassword(activity));
+                params.put("deviceid", Helper.common.getMacAddress(context));
+                params.put("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
+                params.put("userlvl", Helper.variables.getGlobalVar_currentLevel(activity) + "");
+
+                params.put("sql", db.getSQLStringForInsert_UNPOSTED_Activities(activity) + "");
 
                 return params;
             }

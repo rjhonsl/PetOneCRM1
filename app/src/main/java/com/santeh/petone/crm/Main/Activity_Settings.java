@@ -1,11 +1,14 @@
 package com.santeh.petone.crm.Main;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -14,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.santeh.petone.crm.APIs.MyVolleyAPI;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
 import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.Parser.PetOneParser;
@@ -38,6 +42,7 @@ public class Activity_Settings extends FragmentActivity {
     Context context;
 
     DB_Query_PetOneCRM db;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,13 @@ public class Activity_Settings extends FragmentActivity {
         activity = this;
 
         db = new DB_Query_PetOneCRM(this);
+        pd = new ProgressDialog(context);
+
+        custInfoList = new ArrayList<>();
+
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setCancelable(false);
+
 
 
         btnTitleLeft = (ImageButton) findViewById(R.id.btn_title_left);
@@ -56,7 +68,29 @@ public class Activity_Settings extends FragmentActivity {
         llRestore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                restoreFromDB_ClientInfo(activity, context);
+
+                final Dialog d = Helper.common.dialogThemedYesNO(activity, "Restoring the database will remove existing data that is not posted." +
+                        "\n\nAre you sure you want to restore data from server?", "Restore", "NO", "YES", R.color.red_material_600);
+                Button yes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                Button no = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pd.show();
+                        restoreFromDB_ClientInfo(activity, context);
+                        d.hide();
+                    }
+                });
+
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.hide();
+                    }
+                });
+
+
             }
         });
 
@@ -74,14 +108,8 @@ public class Activity_Settings extends FragmentActivity {
 
     private void restoreFromDB_ClientInfo(final Activity activity, final Context context) {
 
-        final ProgressDialog pd = new ProgressDialog(context);
-        custInfoList = new ArrayList<>();
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setCancelable(false);
-        pd.setMessage("Syncing...");
+        pd.setMessage("Restoring information...");
         pd.show();
-
-
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, Helper.variables.URL_SELECT_CLIENTINFO_BY_USERID,
                 new Response.Listener<String>() {
@@ -89,17 +117,41 @@ public class Activity_Settings extends FragmentActivity {
                     public void onResponse(final String response) {
                         pd.hide();
                         if (!response.substring(1, 2).equalsIgnoreCase("0")) {
+
                             custInfoList = PetOneParser.parseFeed(response);
-                            Helper.common.toastShort(activity, custInfoList.size()+"" );
+                            if (db.getClientInfoByUserID(Helper.variables.getGlobalVar_currentUserID(activity)+"").getCount() > 0) {
+                                db.emptyTable(DB_Helper_PetOneCRM.TBL_CLIENTINFO);
+                            }
+    
+                            for (int i = 0; i < custInfoList.size(); i++) {
+                                db.insertClientInfo(
+                                        custInfoList.get(i).getLocalId(),
+                                        custInfoList.get(i).getCust_latitude(),
+                                        custInfoList.get(i).getCust_longtitude(),
+                                        custInfoList.get(i).getAddress(),
+                                        custInfoList.get(i).getCustomerName(),
+                                        custInfoList.get(i).getCustCode(),
+                                        custInfoList.get(i).getContact_number(),
+                                        custInfoList.get(i).getDateAddedToDB(),
+                                        custInfoList.get(i).getAddedBy(),
+                                        1
+                                )
+                                ;
+                            }
+
+                            restoreFromDB_ClientUpdates(activity, context);
                         } else {
-                            Helper.common.toastShort(activity, "FAiL");
+
+                            Helper.common.toastShort(activity, "Restore Failed. Please try again.");
+                            cleartablesforRestore();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Helper.common.toastShort(activity, "SYNC INTERRUPTED.");
+                        Helper.common.toastShort(activity, "RESTORE INTERRUPTED. " + error.toString());
+                        cleartablesforRestore();
                         pd.hide();
                     }
                 }) {
@@ -121,6 +173,79 @@ public class Activity_Settings extends FragmentActivity {
     }
 
 
+
+    private void restoreFromDB_ClientUpdates(final Activity activity, final Context context) {
+        custInfoList = new ArrayList<>();
+        StringRequest postRequest = new StringRequest(Request.Method.POST, Helper.variables.URL_SELECT_CLIENTUPDATE_BY_USERID,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(final String response) {
+                        pd.hide();
+                        if (!response.substring(1, 2).equalsIgnoreCase("0")) {
+
+                            custInfoList = PetOneParser.parseFeed(response);
+
+                            if (db.getClientUpdate_by_userID(activity).getCount() > 0) {
+                                db.emptyTable(DB_Helper_PetOneCRM.TBL_UPDATES);
+                            }
+
+                            for (int i = 0; i < custInfoList.size(); i++) {
+                                String splitted[] = custInfoList.get(i).getUpdateClientId().split("-");
+                                String clientid = splitted[1];
+                                db.insertClientUpdates(
+                                        custInfoList.get(i).getUpdateLocalId(),
+                                        custInfoList.get(i).getUpdateRemarks(),
+                                        clientid,
+                                        custInfoList.get(i).getUpdateDateAdded(),
+                                        1
+                                )
+                                ;
+                            }
+
+                            Intent intent = new Intent(activity, Activity_LoginScreen.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            Helper.common.toastShort(activity, "Restore Successful.");
+
+
+                        } else {
+                            Helper.common.toastShort(activity, "Restore Failed. Please try again.");
+                            pd.hide();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Helper.common.toastShort(activity, "RESTORE INTERRUPTED. " + error.toString());
+                        pd.hide();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", Helper.variables.getGlobalVar_currentUserName(activity));
+                params.put("password", Helper.variables.getGlobalVar_currentUserPassword(activity));
+                params.put("deviceid", Helper.common.getMacAddress(context));
+                params.put("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
+                params.put("userlvl", Helper.variables.getGlobalVar_currentLevel(activity) + "");
+
+                return params;
+            }
+        };
+
+        MyVolleyAPI api = new MyVolleyAPI();
+        api.addToReqQueue(postRequest, context);
+    }
+
+
+    private void cleartablesforRestore(){
+
+        db.emptyTable(DB_Helper_PetOneCRM.TBL_UPDATES);
+        db.emptyTable(DB_Helper_PetOneCRM.TBL_CLIENTINFO);
+        db.emptyTable(DB_Helper_PetOneCRM.TBL_USERS);
+        db.emptyTable(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY);
+    }
 
 
 

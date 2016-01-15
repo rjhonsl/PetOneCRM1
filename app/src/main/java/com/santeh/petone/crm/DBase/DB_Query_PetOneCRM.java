@@ -59,6 +59,24 @@ public class DB_Query_PetOneCRM {
 		return  db.insert(DB_Helper_PetOneCRM.TBL_CLIENTINFO, null, values);
 	}
 
+
+	public long insertClientInfo(String id, String lat, String lng, String address, String clientName, String custCode, String contactNumber, String dateAdded, String addedBy, int isPosted){
+
+		ContentValues values = new ContentValues();
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_ID, id);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_LAT, lat);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_LNG, lng);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_ADDRESS, address);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME, clientName);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_CUSTCODE, custCode);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_C_NUMBER, contactNumber);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_dateAdded, dateAdded);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_addedby, addedBy);
+		values.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted, isPosted);
+
+		return  db.insert(DB_Helper_PetOneCRM.TBL_CLIENTINFO, null, values);
+	}
+
 	public long insertClientUpdates(String remarks, String clientId){
 
 		ContentValues values = new ContentValues();
@@ -66,6 +84,19 @@ public class DB_Query_PetOneCRM {
 		values.put(DB_Helper_PetOneCRM.CL_UPDATES_REMARKS, remarks);
 		values.put(DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED, System.currentTimeMillis());
 		values.put(DB_Helper_PetOneCRM.CL_UPDATES_isposted, 0);
+
+		return  db.insert(DB_Helper_PetOneCRM.TBL_UPDATES, null, values);
+	}
+
+
+	public long insertClientUpdates(String id, String remarks, String clientId, String dateAdded, int isposted){
+
+		ContentValues values = new ContentValues();
+		values.put(DB_Helper_PetOneCRM.CL_UPDATES_ID, id);
+		values.put(DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID, clientId);
+		values.put(DB_Helper_PetOneCRM.CL_UPDATES_REMARKS, remarks);
+		values.put(DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED, dateAdded);
+		values.put(DB_Helper_PetOneCRM.CL_UPDATES_isposted, isposted);
 
 		return  db.insert(DB_Helper_PetOneCRM.TBL_UPDATES, null, values);
 	}
@@ -278,6 +309,18 @@ public class DB_Query_PetOneCRM {
 		return db.rawQuery(query, params);
 	}
 
+	public Cursor getClientUpdate_by_userID(Activity activity) {
+		String query = "SELECT * FROM [SALES.PETONE.CRM.UPDATES] "
+				+ "INNER JOIN [SALES.PETONE.CRM.CLIENTINFO] ON "
+				+ "[SALES.PETONE.CRM.CLIENTINFO].ci_customerId = [SALES.PETONE.CRM.UPDATES].updates_clientid "
+				+ "WHERE [SALES.PETONE.CRM.CLIENTINFO].ci_addedby = "+ Helper.variables.getGlobalVar_currentUserID(activity)  + " "
+				+ "ORDER BY " + DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME + " ASC"
+				;
+
+
+		return db.rawQuery(query, null);
+	}
+
 
 
 	public String getSQLStringForInsert_UNPOSTED_CustomerINFO(Activity activity, int[] selectedID) {
@@ -365,6 +408,65 @@ public class DB_Query_PetOneCRM {
 
 
 
+	public String getSQLStringForInsert_UNPOSTED_Activities(Activity activity) {
+
+
+		String sqlString = "" +
+				"INSERT INTO `"+Helper.random.trimFirstAndLast(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY)+"` " +
+				"(`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG +"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME+"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE+"`)  VALUES ";
+
+
+		String query = "SELECT * FROM `SALES.PETONE.CRM.USERS.ACTIVITY` " +
+				"WHERE " +
+				"user_act_isposted = 0";
+
+
+		Cursor cur = db.rawQuery(query, null);
+		String user_id = "", user_userid ="", user_actiondone ="", user_lat="", user_long="", user_datetime ="",user_actiontype="";
+		if (cur.getCount() > 0) {
+			while (cur.moveToNext()) {
+				user_id = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID)).replaceAll("'", "\\'");
+				user_userid = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID)).replaceAll("'", "\\'");
+				user_actiondone = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE)).replaceAll("'", "\\'");
+				user_lat = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT)).replaceAll("'", "\\'");
+				user_long = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG)).replaceAll("'", "\\'");
+				user_datetime = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME)).replaceAll("'", "\\'");
+				user_actiontype = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE)).replaceAll("'", "\\'");
+
+				sqlString = sqlString +
+						"( '"+user_id+"',  " +
+						"'"+user_userid+"',  " +
+						"'"+user_actiondone+"',  " +
+						"'"+user_lat+"',  " +
+						"'"+user_long+"',  " +
+						"'"+user_datetime+"',  " +
+						"'"+user_actiontype+"' ),";
+			}
+		}
+
+		String strSql = sqlString.substring(0, sqlString.length() - 1);
+		strSql = strSql + " " +
+				" ON DUPLICATE KEY UPDATE " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME+"), " +
+				" 	 "+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_localID+" = VALUES("+DB_Helper_PetOneCRM.CL_USER_ACTIVITY_localID+") "
+		;
+
+		return strSql;
+	}
+
+
+
 	public String getSQLStringForInsert_UNPOSTED_CustomerUPDATES(Activity activity, int[] selectedID) {
 
 
@@ -412,15 +514,10 @@ public class DB_Query_PetOneCRM {
 			if (cur.getCount() > 0) {
 				Log.d("query", "before if not zero " + cur.getCount());
 				while (cur.moveToNext()) {
-					Log.d("query", "before up_id");
 					upd_id = Helper.variables.getGlobalVar_currentUserID(activity) + "-" + cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_ID)).replaceAll("'", "\\'");
-					Log.d("query", "before remarks");
 					upd_remarks = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_REMARKS)).replaceAll("'", "\\'");
-					Log.d("query", "before upd_clientid");
-					upd_clientid = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID)).replaceAll("'", "\\'");
-					Log.d("query", "before dateadded");
+					upd_clientid = Helper.variables.getGlobalVar_currentUserID(activity)+"-"+cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID)).replaceAll("'", "\\'");
 					upd_dateAdded = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_DATEADDED)).replaceAll("'", "\\'");
-					Log.d("query", "before localid");
 					upd_localid = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_UPDATES_ID)).replaceAll("'", "\\'");
 
 					sqlString = sqlString +
@@ -471,6 +568,14 @@ public class DB_Query_PetOneCRM {
 	public boolean deleteClientUpdateById(String rowId) {
 		String where = DB_Helper_PetOneCRM.CL_UPDATES_ID+ "=" + rowId;
 		return db.delete(DB_Helper_PetOneCRM.TBL_UPDATES, where, null) != 0;
+	}
+
+	public void emptyTable(String tableName) {
+
+		String query = "DELETE FROM "+tableName;
+		String[] params = new String[]{};
+		db.rawQuery(query, null);
+
 	}
 
 
@@ -535,6 +640,17 @@ public class DB_Query_PetOneCRM {
 		newValues.put(DB_Helper_PetOneCRM.CL_CLIENTINFO_IsPosted, 1);
 
 		return 	db.update(DB_Helper_PetOneCRM.TBL_CLIENTINFO, newValues, where, null);
+	}
+
+	public int updateUnPostedToPosted_All_userActivities() {
+
+
+		String where = DB_Helper_PetOneCRM.CL_USER_ACTIVITY_isPosted + " = 0 ";
+
+		ContentValues newValues = new ContentValues();
+		newValues.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_isPosted, 1);
+
+		return 	db.update(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY, newValues, where, null);
 	}
 
 

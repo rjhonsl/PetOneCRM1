@@ -18,6 +18,12 @@ public class CustInfoObject {
 	private String lastname;
 	private String customerName;
 	private String localId;
+	private String dbID;
+	private String updateID;
+	private String updateRemarks;
+	private String updateClientId;
+	private String updateDateAdded;
+	private String updateLocalId;
 
 	private String accountlevelDescription;
 	private int userlevel;
@@ -275,5 +281,53 @@ public class CustInfoObject {
 
 	public void setLocalId(String localId) {
 		this.localId = localId;
+	}
+
+	public String getDbID() {
+		return dbID;
+	}
+
+	public void setDbID(String dbID) {
+		this.dbID = dbID;
+	}
+
+	public String getUpdateID() {
+		return updateID;
+	}
+
+	public void setUpdateID(String updateID) {
+		this.updateID = updateID;
+	}
+
+	public String getUpdateRemarks() {
+		return updateRemarks;
+	}
+
+	public void setUpdateRemarks(String updateRemarks) {
+		this.updateRemarks = updateRemarks;
+	}
+
+	public String getUpdateClientId() {
+		return updateClientId;
+	}
+
+	public void setUpdateClientId(String updateClientId) {
+		this.updateClientId = updateClientId;
+	}
+
+	public String getUpdateDateAdded() {
+		return updateDateAdded;
+	}
+
+	public void setUpdateDateAdded(String updateDateAdded) {
+		this.updateDateAdded = updateDateAdded;
+	}
+
+	public String getUpdateLocalId() {
+		return updateLocalId;
+	}
+
+	public void setUpdateLocalId(String updateLocalId) {
+		this.updateLocalId = updateLocalId;
 	}
 }
