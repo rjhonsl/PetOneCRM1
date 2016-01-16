@@ -24,6 +24,15 @@ public class CustInfoObject {
 	private String updateClientId;
 	private String updateDateAdded;
 	private String updateLocalId;
+	private String actID;
+	private String actUserID;
+	private String actActionDone;
+	private String actLat;
+	private String actLong;
+	private String actDatetime;
+	private String actActionType;
+	private String actLocalId;
+
 
 	private String accountlevelDescription;
 	private int userlevel;
@@ -329,5 +338,69 @@ public class CustInfoObject {
 
 	public void setUpdateLocalId(String updateLocalId) {
 		this.updateLocalId = updateLocalId;
+	}
+
+	public String getActID() {
+		return actID;
+	}
+
+	public void setActID(String actID) {
+		this.actID = actID;
+	}
+
+	public String getActUserID() {
+		return actUserID;
+	}
+
+	public void setActUserID(String actUserID) {
+		this.actUserID = actUserID;
+	}
+
+	public String getActActionDone() {
+		return actActionDone;
+	}
+
+	public void setActActionDone(String actActionDone) {
+		this.actActionDone = actActionDone;
+	}
+
+	public String getActLat() {
+		return actLat;
+	}
+
+	public void setActLat(String actLat) {
+		this.actLat = actLat;
+	}
+
+	public String getActLong() {
+		return actLong;
+	}
+
+	public void setActLong(String actLong) {
+		this.actLong = actLong;
+	}
+
+	public String getActDatetime() {
+		return actDatetime;
+	}
+
+	public void setActDatetime(String actDatetime) {
+		this.actDatetime = actDatetime;
+	}
+
+	public String getActActionType() {
+		return actActionType;
+	}
+
+	public void setActActionType(String actActionType) {
+		this.actActionType = actActionType;
+	}
+
+	public String getActLocalId() {
+		return actLocalId;
+	}
+
+	public void setActLocalId(String actLocalId) {
+		this.actLocalId = actLocalId;
 	}
 }

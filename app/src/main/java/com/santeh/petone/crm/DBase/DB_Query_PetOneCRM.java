@@ -129,6 +129,22 @@ public class DB_Query_PetOneCRM {
 	}
 
 
+	public long insertUserActivityData(String id, String userid, String actiondone, String lat, String lng, String millis, String actionType){
+		ContentValues values = new ContentValues();
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID, id);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID, userid);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE, actiondone);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT, lat);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG, lng);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME, millis);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE, actionType);
+		values.put(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_isPosted, "1");
+
+		return  db.insert(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY, null, values);
+	}
+
+
+
 
 	public void insertUserAccountInfo(int userid, int userlvl, String firstname, String lastname, String username, String password, String deviceID, String dateAdded, int isActive){
 		ContentValues values = new ContentValues();
@@ -323,6 +339,17 @@ public class DB_Query_PetOneCRM {
 
 
 
+	public Cursor getUserActivity_by_userID(Activity activity) {
+		String query = "SELECT * FROM `"+Helper.random.trimFirstAndLast(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY)+"` "
+				+ "ORDER BY " + DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME + " ASC"
+				;
+
+
+		return db.rawQuery(query, null);
+	}
+
+
+
 	public String getSQLStringForInsert_UNPOSTED_CustomerINFO(Activity activity, int[] selectedID) {
 
 
@@ -419,7 +446,8 @@ public class DB_Query_PetOneCRM {
 				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT +"`, " +
 				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG +"`, " +
 				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME+"`, " +
-				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE+"`)  VALUES ";
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE+"`, " +
+				"`"+ DB_Helper_PetOneCRM.CL_USER_ACTIVITY_localID+"`)  VALUES ";
 
 
 		String query = "SELECT * FROM `SALES.PETONE.CRM.USERS.ACTIVITY` " +
@@ -428,7 +456,7 @@ public class DB_Query_PetOneCRM {
 
 
 		Cursor cur = db.rawQuery(query, null);
-		String user_id = "", user_userid ="", user_actiondone ="", user_lat="", user_long="", user_datetime ="",user_actiontype="";
+		String user_id = "", user_userid ="", user_actiondone ="", user_lat="", user_long="", user_datetime ="",user_actiontype="", user_localId;
 		if (cur.getCount() > 0) {
 			while (cur.moveToNext()) {
 				user_id = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID)).replaceAll("'", "\\'");
@@ -438,15 +466,17 @@ public class DB_Query_PetOneCRM {
 				user_long = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG)).replaceAll("'", "\\'");
 				user_datetime = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME)).replaceAll("'", "\\'");
 				user_actiontype = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE)).replaceAll("'", "\\'");
+				user_localId = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID)).replaceAll("'", "\\'");
 
 				sqlString = sqlString +
-						"( '"+user_id+"',  " +
+						"( '"+user_id+"-"+user_userid+"',  " +
 						"'"+user_userid+"',  " +
 						"'"+user_actiondone+"',  " +
 						"'"+user_lat+"',  " +
 						"'"+user_long+"',  " +
 						"'"+user_datetime+"',  " +
-						"'"+user_actiontype+"' ),";
+						"'"+user_actiontype+"',  " +
+						"'"+user_localId+"' ),";
 			}
 		}
 

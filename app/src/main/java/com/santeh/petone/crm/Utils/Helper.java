@@ -35,6 +35,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
+import com.santeh.petone.crm.DBase.DB_Query_PetOneCRM;
 import com.santeh.petone.crm.Obj.Var;
 import com.santeh.petone.crm.R;
 
@@ -56,6 +58,7 @@ public class Helper {
         public static String URL_PHP_RAW_QUERY_POST_INSERT              = sourceAddress_goDaddy + "insertSyncFarmInfo.php";
         public static String URL_SELECT_CLIENTINFO_BY_USERID            = sourceAddress_goDaddy + "petone_select_clientinfo_by_userid.php";
         public static String URL_SELECT_CLIENTUPDATE_BY_USERID          = sourceAddress_goDaddy + "petone_select_clientupdate_by_userid.php";
+        public static String URL_SELECT_USERACTIVITY_BY_USERID          = sourceAddress_goDaddy + "petone_select_useractivity_by_userid.php";
 
         public static String ACTIVITY_CLIENTUPDATES             = "updates";
         public static String ACTIVITY_UNSYCED_CLIENTINFO        = "unsyced_clientinfo";
@@ -507,6 +510,21 @@ public class Helper {
         }
 
 
+    }
+
+
+
+    public static class DBase{
+
+        public static void cleartablesforRestore(DB_Query_PetOneCRM db, Context context) {
+            db = new DB_Query_PetOneCRM(context);
+            db.open();
+
+            db.emptyTable(DB_Helper_PetOneCRM.TBL_UPDATES);
+            db.emptyTable(DB_Helper_PetOneCRM.TBL_CLIENTINFO);
+            db.emptyTable(DB_Helper_PetOneCRM.TBL_USERS);
+            db.emptyTable(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY);
+        }
 
     }
 

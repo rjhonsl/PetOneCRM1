@@ -78,7 +78,7 @@ public class Activity_Settings extends FragmentActivity {
                     @Override
                     public void onClick(View v) {
                         pd.show();
-                        restoreFromDB_ClientInfo(activity, context);
+                        restoreFromWeb_ClientInfo(activity, context);
                         d.hide();
                     }
                 });
@@ -106,7 +106,7 @@ public class Activity_Settings extends FragmentActivity {
     }
 
 
-    private void restoreFromDB_ClientInfo(final Activity activity, final Context context) {
+    private void restoreFromWeb_ClientInfo(final Activity activity, final Context context) {
 
         pd.setMessage("Restoring information...");
         pd.show();
@@ -119,7 +119,7 @@ public class Activity_Settings extends FragmentActivity {
                         if (!response.substring(1, 2).equalsIgnoreCase("0")) {
 
                             custInfoList = PetOneParser.parseFeed(response);
-                            if (db.getClientInfoByUserID(Helper.variables.getGlobalVar_currentUserID(activity)+"").getCount() > 0) {
+                            if (db.getClientInfoByUserID(Helper.variables.getGlobalVar_currentUserID(activity) + "").getCount() > 0) {
                                 db.emptyTable(DB_Helper_PetOneCRM.TBL_CLIENTINFO);
                             }
     
@@ -139,11 +139,13 @@ public class Activity_Settings extends FragmentActivity {
                                 ;
                             }
 
-                            restoreFromDB_ClientUpdates(activity, context);
+                            restoreFromWeb_ClientUpdates(activity, context);
                         } else {
 
                             Helper.common.toastShort(activity, "Restore Failed. Please try again.");
-                            cleartablesforRestore();
+                            Helper.DBase.cleartablesforRestore(db, context);
+                            pd.hide();
+
                         }
                     }
                 },
@@ -151,7 +153,7 @@ public class Activity_Settings extends FragmentActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Helper.common.toastShort(activity, "RESTORE INTERRUPTED. " + error.toString());
-                        cleartablesforRestore();
+                        Helper.DBase.cleartablesforRestore(db, context);
                         pd.hide();
                     }
                 }) {
@@ -174,13 +176,12 @@ public class Activity_Settings extends FragmentActivity {
 
 
 
-    private void restoreFromDB_ClientUpdates(final Activity activity, final Context context) {
+    private void restoreFromWeb_ClientUpdates(final Activity activity, final Context context) {
         custInfoList = new ArrayList<>();
         StringRequest postRequest = new StringRequest(Request.Method.POST, Helper.variables.URL_SELECT_CLIENTUPDATE_BY_USERID,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(final String response) {
-                        pd.hide();
                         if (!response.substring(1, 2).equalsIgnoreCase("0")) {
 
                             custInfoList = PetOneParser.parseFeed(response);
@@ -202,14 +203,14 @@ public class Activity_Settings extends FragmentActivity {
                                 ;
                             }
 
-                            Intent intent = new Intent(activity, Activity_LoginScreen.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            Helper.common.toastShort(activity, "Restore Successful.");
+                            restoreFromWeb_UserActivity();
+
+
 
 
                         } else {
                             Helper.common.toastShort(activity, "Restore Failed. Please try again.");
+                            Helper.DBase.cleartablesforRestore(db, context);
                             pd.hide();
                         }
                     }
@@ -217,7 +218,8 @@ public class Activity_Settings extends FragmentActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Helper.common.toastShort(activity, "RESTORE INTERRUPTED. " + error.toString());
+                        Helper.common.toastShort(activity, "Restore Failed. Please try again.");
+                        Helper.DBase.cleartablesforRestore(db, context);
                         pd.hide();
                     }
                 }) {
@@ -239,15 +241,75 @@ public class Activity_Settings extends FragmentActivity {
     }
 
 
-    private void cleartablesforRestore(){
 
-        db.emptyTable(DB_Helper_PetOneCRM.TBL_UPDATES);
-        db.emptyTable(DB_Helper_PetOneCRM.TBL_CLIENTINFO);
-        db.emptyTable(DB_Helper_PetOneCRM.TBL_USERS);
-        db.emptyTable(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY);
+    private void restoreFromWeb_UserActivity() {
+        custInfoList = new ArrayList<>();
+        StringRequest postRequest = new StringRequest(Request.Method.POST, Helper.variables.URL_SELECT_USERACTIVITY_BY_USERID,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(final String response) {
+                        pd.hide();
+                        if (!response.substring(1, 2).equalsIgnoreCase("0")) {
+
+                            custInfoList = PetOneParser.parseFeed(response);
+
+                            if (db.getUserActivity_by_userID(activity).getCount() > 0) {
+                                db.emptyTable(DB_Helper_PetOneCRM.TBL_USER_ACTIVITY);
+                            }
+
+                            for (int i = 0; i < custInfoList.size(); i++) {
+
+
+
+                                db.insertUserActivityData(
+                                        custInfoList.get(i).getActLocalId(),
+                                        custInfoList.get(i).getActUserID(),
+                                        custInfoList.get(i).getActActionDone(),
+                                        custInfoList.get(i).getActLat(),
+                                        custInfoList.get(i).getActLong(),
+                                        custInfoList.get(i).getActDatetime(),
+                                        custInfoList.get(i).getActActionType()
+                                )
+                                ;
+                            }
+
+                            Intent intent = new Intent(activity, Activity_LoginScreen.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            Helper.common.toastShort(activity, "Restore Successful.");
+
+
+                        } else {
+                            Helper.common.toastShort(activity, "Restore Failed. Please try again.");
+                            Helper.DBase.cleartablesforRestore(db, context);
+                            pd.hide();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Helper.common.toastShort(activity, "RESTORE INTERRUPTED. " + error.toString());
+                        Helper.DBase.cleartablesforRestore(db, context);
+                        pd.hide();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", Helper.variables.getGlobalVar_currentUserName(activity));
+                params.put("password", Helper.variables.getGlobalVar_currentUserPassword(activity));
+                params.put("deviceid", Helper.common.getMacAddress(context));
+                params.put("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
+                params.put("userlvl", Helper.variables.getGlobalVar_currentLevel(activity) + "");
+
+                return params;
+            }
+        };
+
+        MyVolleyAPI api = new MyVolleyAPI();
+        api.addToReqQueue(postRequest, context);
     }
-
-
 
 
     @Override

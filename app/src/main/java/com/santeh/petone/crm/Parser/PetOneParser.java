@@ -1,6 +1,8 @@
 package com.santeh.petone.crm.Parser;
 
 
+import android.util.Log;
+
 import com.santeh.petone.crm.DBase.DB_Helper_PetOneCRM;
 import com.santeh.petone.crm.Obj.CustInfoObject;
 
@@ -28,6 +30,9 @@ public class PetOneParser {
                 JSONObject obj = ar.getJSONObject(i);
                 CustInfoObject custInfoObject = new CustInfoObject();
 
+
+
+                /**  CLIENT INFO */
 
                 if (obj.has(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME)) {
                     custInfoObject.setCustomerName(obj.getString(DB_Helper_PetOneCRM.CL_CLIENTINFO_CLIENT_NAME));
@@ -92,6 +97,8 @@ public class PetOneParser {
 
 
 
+                /**  UPDATES */
+
                 if (obj.has(DB_Helper_PetOneCRM.CL_UPDATES_ID)) {
                     custInfoObject.setUpdateID(obj.getString(DB_Helper_PetOneCRM.CL_UPDATES_ID));
                 } else {
@@ -123,6 +130,54 @@ public class PetOneParser {
                 }
 
 
+
+
+                /**  ACTIVITY */
+
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID)) {
+                    custInfoObject.setActID(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ID));
+                } else {
+                    custInfoObject.setActID("0");
+                }
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID)) {
+                    custInfoObject.setActUserID(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_USERID));
+                    Log.d("sync", "" + obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG) + " x " + obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME));
+
+                } else {
+                    custInfoObject.setActUserID("0");
+                }
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE)) {
+                    custInfoObject.setActActionDone(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONDONE));
+                } else {
+                    custInfoObject.setActActionDone("0");
+                }
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT)) {
+                    custInfoObject.setActLat(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LAT));
+                } else {
+                    custInfoObject.setActLat("0");
+                }
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG)) {
+                    custInfoObject.setActLong(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_LNG));
+                } else {
+                    custInfoObject.setActLong("0");
+                }
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE)) {
+                    custInfoObject.setActActionType(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_ACTIONTYPE));
+                } else {
+                    custInfoObject.setActActionType("0");
+                }
+
+                if (obj.has(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_localID)) {
+                    custInfoObject.setActLocalId(obj.getString(DB_Helper_PetOneCRM.CL_USER_ACTIVITY_localID));
+                } else {
+                    custInfoObject.setActLocalId("0");
+                }
 
 
 
