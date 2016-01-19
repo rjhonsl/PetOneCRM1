@@ -498,8 +498,6 @@ public class DB_Query_PetOneCRM {
 
 
 	public String getSQLStringForInsert_UNPOSTED_CustomerUPDATES(Activity activity, int[] selectedID) {
-
-
 		String whereSelected = "";
 		for (int i = 0; i < selectedID.length; i++) {
 			String condition = "OR";
@@ -508,6 +506,7 @@ public class DB_Query_PetOneCRM {
 			}else{
 				condition = "OR";
 			}
+
 			whereSelected = whereSelected +  DB_Helper_PetOneCRM.CL_UPDATES_ID + " = "+ selectedID[i] + " " + condition + " ";
 		}
 
@@ -555,7 +554,7 @@ public class DB_Query_PetOneCRM {
 							"'"+upd_remarks+"',  " +
 							"'"+upd_clientid+"',  " +
 							"'"+upd_dateAdded+"',  " +
-							"'"+upd_localid+"' ),";
+							"'"+upd_localid+"' )," ;
 				}
 			}
 		}
