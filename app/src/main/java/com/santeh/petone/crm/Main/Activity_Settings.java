@@ -106,7 +106,7 @@ public class Activity_Settings extends FragmentActivity {
                             /////////////////////////////////////////////////////////////////////////////////////////////////
                             //Create FileOpenDialog and register a callback
                             /////////////////////////////////////////////////////////////////////////////////////////////////
-                            SimpleFileDialog FileOpenDialog = new SimpleFileDialog(activity, "FileOpen",
+                            SimpleFileDialog FileOpenDialog = new SimpleFileDialog(activity, ".db",
                                     new SimpleFileDialog.SimpleFileDialogListener() {
                                         String m_chosen;
 
@@ -159,64 +159,86 @@ public class Activity_Settings extends FragmentActivity {
             @Override
             public void onClick(View v) {
 
-                if(Helper.random.checkSD(activity)){
-                    final String inFileName = "/data/data/com.santeh.petone.crm/databases/petone.db";//current database to be exported
-                    File dbFile = new File(inFileName);
-                    FileInputStream fis = null;
-                    try {
-                        fis = new FileInputStream(dbFile);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+
+                final Dialog d = Helper.common.dialogThemedYesNO(activity,
+                        "Create local backup? ",
+                        "Backup", "NO", "YES", R.color.red_material_600);
+                Button btnyes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                Button btnno  = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+
+                btnno.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.hide();
                     }
+                });
 
-                    //gets time for naming sequence
-                    Date d = new Date();
-                    CharSequence s  = DateFormat.format("MMM-dd-yyyy hhmmAA", d.getTime());
-                    String curDate = String.valueOf(s);
+                btnyes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                    String outFileName = Environment.getExternalStorageDirectory()+"/.ptn/local/" + curDate+".db";//output file name
+                        if(Helper.random.checkSD(activity)){
+                            final String inFileName = "/data/data/com.santeh.petone.crm/databases/petone.db";//current database to be exported
+                            File dbFile = new File(inFileName);
+                            FileInputStream fis = null;
+                            try {
+                                fis = new FileInputStream(dbFile);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
 
-                    // Open the empty db as the output stream
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(outFileName);
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                            //gets time for naming sequence
+                            Date d = new Date();
+                            CharSequence s  = DateFormat.format("MMM-dd-yyyy hhmmAA", d.getTime());
+                            String curDate = String.valueOf(s);
 
-                    // Transfer bytes from the inputfile to the outputfile
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    try {
-                        while ((length = fis.read(buffer))>0){
-                            output.write(buffer, 0, length);
+                            String outFileName = Environment.getExternalStorageDirectory()+"/.ptn/local/" + curDate+".db";//output file name
+
+                            // Open the empty db as the output stream
+                            OutputStream output = null;
+                            try {
+                                output = new FileOutputStream(outFileName);
+                            } catch (FileNotFoundException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+
+                            // Transfer bytes from the inputfile to the outputfile
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            try {
+                                while ((length = fis.read(buffer))>0){
+                                    output.write(buffer, 0, length);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Close the streams
+                            try {
+                                output.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                output.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                fis.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Helper.common.toastLong(activity, "Back up Successfull: \n" + curDate);
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                        else{
+                            Helper.common.toastLong(activity, "External Storage not available!");
+                        }
 
-                    // Close the streams
-                    try {
-                        output.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Helper.common.toastLong(activity, "Back up Successfull: \n" + curDate);
-                }
-                else{
-                    Helper.common.toastLong(activity, "External Storage not available!");
-                }
+                });
+
             }
         });
 
