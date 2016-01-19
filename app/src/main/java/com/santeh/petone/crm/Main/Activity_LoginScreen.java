@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.santeh.petone.crm.Utils.FusedLocation;
 import com.santeh.petone.crm.Utils.Helper;
 import com.santeh.petone.crm.Utils.Logging;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -392,6 +394,26 @@ public class Activity_LoginScreen extends Activity{
         Helper.map.isLocationAvailablePrompt(context, activity);
         fusedLocation.connectToApiClient();
         db.open();
+
+        //creates new folder
+        File folder = new File(Environment.getExternalStorageDirectory() + "/.ptn/local");
+        boolean success = true;
+        boolean check = Helper.random.checkSD(activity);
+        if (check) {
+            if (!folder.exists()) {
+                success = folder.mkdirs();
+            }
+            else
+            {
+                Log.d("mkDirs", "exist");
+            }
+
+            if (success) {
+                Log.d("mkDirs", "SUCCESS");
+            } else {
+                Log.d("mkDirs", "FAIL");
+            }
+        }
     }
 
     @Override

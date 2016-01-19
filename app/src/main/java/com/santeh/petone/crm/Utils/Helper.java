@@ -534,6 +534,20 @@ public class Helper {
         }
 
 
+        public static boolean checkSD(Activity activity) {
+            Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+            if(isSDPresent)
+            {
+//			toaster_long(activity, "SDcard available");
+            }
+            else
+            {
+//			toaster_long(activity, "SDcard not available");
+            }
+            return isSDPresent;
+        }
+
+
     }
 
 

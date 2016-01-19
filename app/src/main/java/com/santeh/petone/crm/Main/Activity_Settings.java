@@ -6,11 +6,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -23,8 +26,17 @@ import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.Parser.PetOneParser;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.Helper;
+import com.santeh.petone.crm.Utils.SimpleFileDialog;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +48,7 @@ public class Activity_Settings extends FragmentActivity {
 
     List<CustInfoObject> custInfoList;
     ImageButton btnTitleLeft;
-    LinearLayout llClientInfo, llRestore;
+    LinearLayout llClientInfo, llRestoreDB, llexport, llimport;
 
     Activity activity;
     Context context;
@@ -63,9 +75,152 @@ public class Activity_Settings extends FragmentActivity {
 
         btnTitleLeft = (ImageButton) findViewById(R.id.btn_title_left);
 
-        llRestore = (LinearLayout) findViewById(R.id.ll_restore);
+        llRestoreDB = (LinearLayout) findViewById(R.id.ll_restore);
+        llexport = (LinearLayout) findViewById(R.id.ll_export_local);
+        llimport = (LinearLayout) findViewById(R.id.ll_import_local);
 
-        llRestore.setOnClickListener(new View.OnClickListener() {
+
+        llimport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                final Dialog d = Helper.common.dialogThemedYesNO(activity,
+                        "All data will be restored to the state of when the backup was done. All existing data after the date will not be restored.\n\nAre you sure you want to retore db? ",
+                        "Restore", "NO", "YES", R.color.red_material_600);
+                Button btnyes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                Button btnno  = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+
+                btnno.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.hide();
+                    }
+                });
+
+                btnyes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.hide();
+                        if (Helper.random.checkSD(activity)) {
+                            /////////////////////////////////////////////////////////////////////////////////////////////////
+                            //Create FileOpenDialog and register a callback
+                            /////////////////////////////////////////////////////////////////////////////////////////////////
+                            SimpleFileDialog FileOpenDialog = new SimpleFileDialog(activity, "FileOpen",
+                                    new SimpleFileDialog.SimpleFileDialogListener() {
+                                        String m_chosen;
+
+                                        @Override
+                                        public void onChosenDir(String chosenDir) {
+                                            // The code in this function will be executed when the dialog OK button is pushed
+                                            m_chosen = chosenDir;
+                                            try {
+                                                File sd = Environment.getExternalStorageDirectory();//gets external Directory/address
+                                                if (sd.canWrite()) {
+                                                    String backupDBPath = "/data/data/com.santeh.petone/databases/petone.db";//database internal storage path
+                                                    File currentDB = new File(backupDBPath);
+                                                    File backupDB = new File(m_chosen);
+
+                                                    if (currentDB.exists()) {
+                                                        FileChannel src = new FileInputStream(backupDB).getChannel();
+                                                        FileChannel dst = new FileOutputStream(currentDB).getChannel();
+                                                        dst.transferFrom(src, 0, src.size());
+                                                        src.close();
+                                                        dst.close();
+                                                        Toast.makeText(getApplicationContext(), "Restore was successful", Toast.LENGTH_LONG).show();
+                                                        Intent i = getBaseContext().getPackageManager()
+                                                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        startActivity(i);
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                Helper.common.toastLong(activity, "Failed to Restore: " + String.valueOf(e));
+                                            }
+
+                                        }
+                                    });
+
+                            //You can change the default filename using the public variable "Default_File_Name"
+                            FileOpenDialog.Default_File_Name = "";
+                            FileOpenDialog.chooseFile_or_Dir();
+                            /////////////////////////////////////////////////////////////////////////////////////////////////
+                        } else {
+                            Helper.common.toastLong(activity, "External storage not available");
+                        }
+                    }
+                });
+
+
+            }
+        });
+
+        llexport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(Helper.random.checkSD(activity)){
+                    final String inFileName = "/data/data/com.santeh.petone.crm/databases/petone.db";//current database to be exported
+                    File dbFile = new File(inFileName);
+                    FileInputStream fis = null;
+                    try {
+                        fis = new FileInputStream(dbFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    //gets time for naming sequence
+                    Date d = new Date();
+                    CharSequence s  = DateFormat.format("MMM-dd-yyyy hhmmAA", d.getTime());
+                    String curDate = String.valueOf(s);
+
+                    String outFileName = Environment.getExternalStorageDirectory()+"/.ptn/local/" + curDate+".db";//output file name
+
+                    // Open the empty db as the output stream
+                    OutputStream output = null;
+                    try {
+                        output = new FileOutputStream(outFileName);
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                    // Transfer bytes from the inputfile to the outputfile
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    try {
+                        while ((length = fis.read(buffer))>0){
+                            output.write(buffer, 0, length);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Close the streams
+                    try {
+                        output.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Helper.common.toastLong(activity, "Back up Successfull: \n" + curDate);
+                }
+                else{
+                    Helper.common.toastLong(activity, "External Storage not available!");
+                }
+            }
+        });
+
+        llRestoreDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
