@@ -10,7 +10,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	private static final String LOGTAG = "DB_GPS";
 	private static final String DATABASE_NAME = "petone.db";
 	//each time you change data structure, you must increment this by 1
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 6;
 
 	//reference for tblarea
 	public static final String TBL_CLIENTINFO = "[SALES.PETONE.CRM.CLIENTINFO]";
@@ -43,7 +43,21 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 			CL_UPDATES_DATEADDED, CL_UPDATES_isposted};
 
 
-	public static final String TBL_USERS = "[SALES.PETONE.CRM.USERS]";
+//	/** tbl for active accounts */
+//	public static final String TBL_ACTIVEACCOUNT 		= "[SALES.PETONE.CRM.ACTIVEACCOUNT]";
+//	public static final String CL_ACACC_USERID			= "acc_userid";
+//	public static final String CL_ACACC_USERLVL			= "acc_userlvl";
+//	public static final String CL_ACACC_LOGGEDIN		= "acc_isloggedin";
+//	public static final String CL_ACACC_USERNAME		= "acc_username";
+//	public static final String CL_ACACC_PASSWORD		= "acc_password";
+//	public static final String CL_ACACC_FIRSTNAME		= "acc_firstname";
+//	public static final String CL_ACACC_LASTNAME		= "acc_lastname";
+//	public static final String CL_ACACC_LASTONLINE		= "acc_lastonline";
+//	public static final String[] ALL_KEY_ACTIVEACOUNTS		= new String[]{CL_ACACC_USERID, CL_ACACC_USERLVL, CL_ACACC_LOGGEDIN,
+//			CL_ACACC_USERNAME, CL_ACACC_PASSWORD, CL_ACACC_FIRSTNAME, CL_ACACC_LASTNAME, CL_ACACC_LASTONLINE};
+
+
+	public static final String TBL_USERS 				= "[SALES.PETONE.CRM.USERS]";
 	public static final String CL_USERS_ID				= "users_id";
 	public static final String CL_USERS_userlvl			= "userlvl";
 	public static final String CL_USERS_firstName		= "users_firstname";
@@ -53,8 +67,10 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 	public static final String CL_USERS_deviceid		= "users_device_id";
 	public static final String CL_USERS_dateAdded		= "dateAdded";
 	public static final String CL_USERS_isactive		= "isactive";
+	public static final String CL_USERS_isloggedin		= "isloggedin";
+	public static final String CL_USERS_lastactive		= "islastactive";
 	public static final String[] ALL_KEY_USERS	= new String[]{CL_USERS_ID, CL_USERS_userlvl, CL_USERS_firstName, CL_USERS_lastName, CL_USERS_username,
-			CL_USERS_password, CL_USERS_deviceid, CL_USERS_dateAdded , CL_USERS_isactive};
+			CL_USERS_password, CL_USERS_deviceid, CL_USERS_dateAdded , CL_USERS_isactive, CL_USERS_isloggedin, CL_USERS_lastactive};
 
 
 	//reference for tblarea
@@ -73,9 +89,9 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 			CL_USER_ACTIVITY_LAT, CL_USER_ACTIVITY_LNG, CL_USER_ACTIVITY_DATETIME, CL_USER_ACTIVITY_ACTIONTYPE, CL_USER_ACTIVITY_isPosted};
 
 
-	//////////////////////////////////////////////////////////////////
+	/** ////////////////////////////////////////////////////////////////
 	///////////// STRINGS FOR CREATING AND UPDATING TABLE ////////////
-	//////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////// */
 	//Query to create tables
 
 	private static final String TBL_CREATE_CLIENTINFO =
@@ -104,6 +120,19 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 					CL_UPDATES_isposted 	+ " INTEGER " +
 					")";
 
+//
+//	private static final String TBL_CREATE_ACTIVEACCOUNT =
+//			"CREATE TABLE " + TBL_ACTIVEACCOUNT + " " +
+//					"(" +
+//					CL_ACACC_USERID			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//					CL_ACACC_USERLVL		+ " TEXT, " +
+//					CL_ACACC_LOGGEDIN 		+ " TEXT, " +
+//					CL_ACACC_USERNAME 		+ " TEXT, " +
+//					CL_ACACC_PASSWORD		+ " TEXT, " +
+//					CL_ACACC_FIRSTNAME 		+ " TEXT, " +
+//					CL_ACACC_LASTONLINE 	+ " TEXT " +
+//					")";
+
 
 	private static final String TBL_CREATE_USERS =
 			"CREATE TABLE " + TBL_USERS + " " +
@@ -116,7 +145,9 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 					CL_USERS_password 		+ " TEXT, " +
 					CL_USERS_deviceid 		+ " TEXT, " +
 					CL_USERS_dateAdded 		+ " INTEGER, " +
-					CL_USERS_isactive 		+ " INTEGER " +
+					CL_USERS_isactive 		+ " INTEGER, " +
+					CL_USERS_isloggedin 	+ " INTEGER, " +
+					CL_USERS_lastactive 	+ " TEXT " +
 					")";
 
 	private static final String TBL_CREATE_USERS_ACTIVITY =
@@ -150,6 +181,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 		db.execSQL(TBL_CREATE_UPDATES);
 		db.execSQL(TBL_CREATE_USERS);
 		db.execSQL(TBL_CREATE_USERS_ACTIVITY);
+//		db.execSQL(TBL_CREATE_ACTIVEACCOUNT);
 		Log.d(LOGTAG, "tables has been created: " + String.valueOf(db));
 	}
 
@@ -160,6 +192,7 @@ public class DB_Helper_PetOneCRM extends SQLiteOpenHelper {
 		_db.execSQL("DROP TABLE IF EXISTS " + TBL_UPDATES);
 		_db.execSQL("DROP TABLE IF EXISTS " + TBL_USERS);
 		_db.execSQL("DROP TABLE IF EXISTS " + TBL_USER_ACTIVITY);
+//		_db.execSQL("DROP TABLE IF EXISTS " + TBL_ACTIVEACCOUNT);
 
 		Log.d(LOGTAG, "table has been deleted: " + String.valueOf(_db));
 		onCreate(_db);

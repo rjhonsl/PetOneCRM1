@@ -359,6 +359,8 @@ public class Activity_LoginScreen extends Activity{
                             intent.putExtra("lat", fusedLocation.getLastKnowLocation().latitude + "");
                             intent.putExtra("long", fusedLocation.getLastKnowLocation().longitude + "");
 
+                            db.updateActiveUser(Helper.variables.getGlobalVar_currentUserID(activity) + "", System.currentTimeMillis() + "");
+
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 @Override
@@ -369,7 +371,7 @@ public class Activity_LoginScreen extends Activity{
                                 }
                             }, 800);
                         }else{
-                            Helper.common.toastShort(activity, "Account is not available. Pleas contact admin for further support.");
+                            Helper.common.toastShort(activity, "Account is not available. Please contact admin for further support.");
                             PD.hide();
                         }
                     }
@@ -441,15 +443,17 @@ public class Activity_LoginScreen extends Activity{
                     @Override
                     public void onResponse(final String response) {
 
-                        PD.dismiss();
                         if (response.substring(1, 2).equalsIgnoreCase("0")) {
                             Helper.common.toastLong(activity, "Username and password does not seem to match.");
+                            PD.dismiss();
                         } else {
 
                             listaccounts = AccountsParser.parseFeed(response);
+                            PD.dismiss();
 
+                            if (listaccounts.get(0).getIsPetOne_active() == 1){ //if this account is active on petone app
 
-                            if (listaccounts.get(0).getIsPetOne_active() == 1){
+                                //get parsed value from web then insert it to global variable
                                 Intent intent = new Intent(Activity_LoginScreen.this, MapsActivity.class);
                                 Helper.variables.setGlobalVar_currentlevel(listaccounts.get(0).getUserlevel(), activity);
                                 Helper.variables.setGlobalVar_currentUserID(listaccounts.get(0).getUserid(), activity);
@@ -463,6 +467,7 @@ public class Activity_LoginScreen extends Activity{
                                 Helper.variables.setGlobalVar_deviceID(listaccounts.get(0).getDeviceid(), activity);
 
 
+                                //if user is already existing then
                                 if (db.isUserExisting(Helper.variables.getGlobalVar_currentUserID(activity) + "")) {
                                     Log.d("LOCAL DB", "UPDATING USER");
                                     int x = db.updateRowOneUser(
@@ -485,7 +490,9 @@ public class Activity_LoginScreen extends Activity{
                                             Helper.variables.getGlobalVar_currentUserPassword(activity),
                                             Helper.variables.getGlobalVar_currentDeviceID(activity),
                                             Helper.variables.getGlobalVar_DateAdded(activity),
-                                            Helper.variables.getGlobalVar_currentisActive(activity)
+                                            Helper.variables.getGlobalVar_currentisActive(activity),
+                                            1,
+                                            System.currentTimeMillis()+""
                                     );
                                 }
 
@@ -498,6 +505,10 @@ public class Activity_LoginScreen extends Activity{
                                 intent.putExtra("fromActivity", "login");
                                 intent.putExtra("lat",fusedLocation.getLastKnowLocation().latitude+"");
                                 intent.putExtra("long",fusedLocation.getLastKnowLocation().longitude+"");
+
+                                db.updateActiveUser(listaccounts.get(0).getUserid()+"", System.currentTimeMillis()+"");
+
+
                                 Logging.userAction(activity, context, Logging.ACTION_LOGIN, Logging.TYPE_USER);
                                 startActivity(intent);
                             }else{

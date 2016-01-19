@@ -144,9 +144,7 @@ public class DB_Query_PetOneCRM {
 	}
 
 
-
-
-	public void insertUserAccountInfo(int userid, int userlvl, String firstname, String lastname, String username, String password, String deviceID, String dateAdded, int isActive){
+	public void insertUserAccountInfo(int userid, int userlvl, String firstname, String lastname, String username, String password, String deviceID, String dateAdded, int isActive, int isloggedin, String lastactive){
 		ContentValues values = new ContentValues();
 		values.put(DB_Helper_PetOneCRM.CL_USERS_ID, userid);
 		values.put(DB_Helper_PetOneCRM.CL_USERS_userlvl, userlvl);
@@ -157,6 +155,8 @@ public class DB_Query_PetOneCRM {
 		values.put(DB_Helper_PetOneCRM.CL_USERS_deviceid, deviceID);
 		values.put(DB_Helper_PetOneCRM.CL_USERS_dateAdded, dateAdded );
 		values.put(DB_Helper_PetOneCRM.CL_USERS_isactive, isActive);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_lastactive, lastactive);
+		values.put(DB_Helper_PetOneCRM.CL_USERS_isloggedin, isloggedin);
 		db.insert(DB_Helper_PetOneCRM.TBL_USERS, null, values);
 	}
 
@@ -239,7 +239,6 @@ public class DB_Query_PetOneCRM {
 		}
 		return  isexisting;
 	}
-
 
 
 	public boolean isClientUpdatePosted(String clientID){
@@ -344,8 +343,24 @@ public class DB_Query_PetOneCRM {
 				+ "ORDER BY " + DB_Helper_PetOneCRM.CL_USER_ACTIVITY_DATETIME + " ASC"
 				;
 
-
 		return db.rawQuery(query, null);
+	}
+
+
+	public String getOneRow(String tableName, String columnName, String condition) {
+		String query = "SELECT "+columnName+" FROM `"+tableName+"` "
+				+ "WHERE " + condition
+				;
+
+		Cursor cur = db.rawQuery(query, null);
+		String value="";
+		if (cur != null) {
+			while (cur.moveToNext()) {
+				value = cur.getString(cur.getColumnIndex(columnName));
+			}
+		}
+
+		return value;
 	}
 
 
@@ -432,7 +447,6 @@ public class DB_Query_PetOneCRM {
 
 		return strSql;
 	}
-
 
 
 	public String getSQLStringForInsert_UNPOSTED_Activities(Activity activity) {
@@ -621,6 +635,29 @@ public class DB_Query_PetOneCRM {
 	}
 
 
+	public int updateOneRow(String tableName, String column, String value, String whereCondition) {
+		ContentValues newValues = new ContentValues();
+		newValues.put(column, value);
+		return 	db.update(tableName, newValues, whereCondition, null);
+	}
+
+	public void updateActiveUser(String userid, String lastActive) {
+		String where1 = DB_Helper_PetOneCRM.CL_USERS_ID + " <> " + userid;
+		ContentValues newValues1 = new ContentValues();
+		newValues1.put(DB_Helper_PetOneCRM.CL_USERS_isloggedin, 0);
+
+		db.update(DB_Helper_PetOneCRM.TBL_USERS, newValues1, where1, null);
+
+
+		String where2 = DB_Helper_PetOneCRM.CL_USERS_ID + " = " + userid;
+		ContentValues newValues2 = new ContentValues();
+		newValues2.put(DB_Helper_PetOneCRM.CL_USERS_isloggedin, 1);
+		newValues2.put(DB_Helper_PetOneCRM.CL_USERS_lastactive, lastActive);
+
+		db.update(DB_Helper_PetOneCRM.TBL_USERS, newValues2, where2, null);
+	}
+
+
 
 	public int updateClientInfo( String indexid, String address, String clientName, String custCode, String contactNumber) {
 		String where = DB_Helper_PetOneCRM.CL_CLIENTINFO_ID + " = " + indexid;
@@ -633,6 +670,8 @@ public class DB_Query_PetOneCRM {
 
 		return 	db.update(DB_Helper_PetOneCRM.TBL_CLIENTINFO, newValues, where, null);
 	}
+
+
 
 
 	public int updateRowOneUser(String userid, String lvl, String firstname, String lastname, String username, String password, String deviceid, String dateAdded) {

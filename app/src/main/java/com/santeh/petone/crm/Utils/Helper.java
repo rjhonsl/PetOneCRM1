@@ -67,17 +67,41 @@ public class Helper {
 
 
 
-        public static void setGlobalVar_currentUserID(int ID, Activity activity){
+        public static void setGlobalVar_currentUserID(int ID, Activity activity) {
+            DB_Query_PetOneCRM db = new DB_Query_PetOneCRM(activity);
+            db.open();
+
+            db.updateOneRow(
+                    DB_Helper_PetOneCRM.TBL_USERS,
+                    DB_Helper_PetOneCRM.CL_USERS_ID,
+                    ID + "",
+                    DB_Helper_PetOneCRM.CL_USERS_ID + " = "+ID);
+
             ((Var) activity.getApplication()).setCurrentuser(ID);
         }
+
+
+        public static int getGlobalVar_currentUserID( Activity activity ){
+
+//
+//            DB_Query_PetOneCRM db = new DB_Query_PetOneCRM(activity);
+//            db.open();
+//
+//            String queried  = db.getOneRow(
+//                    DB_Helper_PetOneCRM.TBL_USERS,
+//                    DB_Helper_PetOneCRM.CL_USERS_ID,
+//                    DB_Helper_PetOneCRM.CL_USERS_isloggedin + " = " + 1);
+//
+            return ((Var) activity.getApplication()).getCurrentuser();
+//            return Integer.parseInt(queried);
+
+        }
+
 
         public static void setGlobalVar_currentlevel(int lvl, Activity activity){
             ((Var) activity.getApplication()).setCurrentuserLvl(lvl);
         }
 
-        public static int getGlobalVar_currentUserID( Activity activity ){
-            return  ((Var) activity.getApplication()).getCurrentuser();
-        }
 
         public static int getGlobalVar_currentLevel(Activity activity){
             return  ((Var) activity.getApplication()).getCurrentuserLvl();

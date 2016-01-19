@@ -19,7 +19,6 @@ public class Var extends Application {
 
     public int currentuser;
     public int currentuserLvl;
-
     public int isactive;
     private String currentUserName;
     private String currentUserFirstname;
