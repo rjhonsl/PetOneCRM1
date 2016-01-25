@@ -405,7 +405,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtTop = (TextView) findViewById(R.id.txtTopTextView);
         showSycnState();
         if (Helper.nullcheck.isGlobalUserIDNull(activity)) {
-            Dialog d = Helper.common.dialogThemedOkOnly(activity, "Session Expired", "It seems that you have been inactive for too long. Please log in again, ", "OK", R.color.red);
+            Dialog d = Helper.common.dialogThemedOkOnly(activity, "Session Expired",
+                    "It seems that you have been inactive for too long. Please log in again, ", "OK", R.color.red);
             d.setCancelable(false);
             Button ok = (Button) d.findViewById(R.id.btn_dialog_okonly_OK);
             ok.setOnClickListener(new View.OnClickListener() {
