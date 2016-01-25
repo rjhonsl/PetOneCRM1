@@ -395,6 +395,7 @@ public class Activity_LoginScreen extends Activity{
         fusedLocation.connectToApiClient();
         db.open();
 
+
         //creates new folder
         File folder = new File(Environment.getExternalStorageDirectory() + "/.ptn/local");
         boolean success = true;

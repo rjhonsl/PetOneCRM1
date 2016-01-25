@@ -550,6 +550,24 @@ public class Helper {
 
     }
 
+    public static class nullcheck{
+        public static boolean isGlobalUserIDNull(Activity activity){
+            boolean isEmpty = false;
+            if(variables.getGlobalVar_currentUserID(activity) <= 0){
+                isEmpty = true;
+            }
+            return  isEmpty;
+        }
+    }
+
+    public static class activityChooser {
+        public static void startActivityClearStack(Activity currentActivity, Class nextActivity) {
+            Intent intent = new Intent(currentActivity, nextActivity);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            currentActivity.startActivity(intent);
+        }
+    }
+
 
 
     public static class DBase{
