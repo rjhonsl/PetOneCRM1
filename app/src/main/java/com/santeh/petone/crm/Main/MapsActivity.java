@@ -470,7 +470,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void exitApp() {
-        final Dialog d = Helper.common.dialogThemedYesNO(activity, "Do you wish to wish to exit the app? You will have to login next time.", "EXIT", "YES", "NO", R.color.red);
+        final Dialog d = Helper.common.dialogThemedYesNO(activity, "Do you wish to exit the app? You will have to login next time.", "EXIT", "YES", "NO", R.color.red);
         d.show();
         Button yes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
         Button no = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
