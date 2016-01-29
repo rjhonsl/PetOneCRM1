@@ -600,6 +600,13 @@ public class DB_Query_PetOneCRM {
 		return db.delete(DB_Helper_PetOneCRM.TBL_CLIENTINFO, where, null) != 0;
 	}
 
+	public boolean deleteClientInfoWithUpdatesByInfoID(String rowId) {
+		String where = DB_Helper_PetOneCRM.CL_CLIENTINFO_ID+ "=" + rowId;
+		deleteClientUpdatesByClientID(rowId);
+		return db.delete(DB_Helper_PetOneCRM.TBL_CLIENTINFO, where, null) != 0;
+
+	}
+
 
 	public boolean deleteClientUpdatesByClientID(String rowId) {
 		String where = DB_Helper_PetOneCRM.CL_UPDATES_CLIENTID+ "=" + rowId;

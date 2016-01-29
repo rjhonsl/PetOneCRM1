@@ -345,6 +345,13 @@ public class Helper {
             TextView txttitle = (TextView) d.findViewById(R.id.dialog_yesno_title);
             TextView txtprompt = (TextView) d.findViewById(R.id.dialog_yesno_prompt);
 
+            btn1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    d.hide();
+                }
+            });
+
             txtprompt.setText(prompt);
             txttitle.setText(title);
             txttitle.setBackground(activity.getResources().getDrawable(resIdColor));
@@ -531,6 +538,10 @@ public class Helper {
 
             trimmed = string.substring(1,string.length() );
             return  trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+
+        public static String[] splitter(String splitter, String strToSplit){
+           return strToSplit.split(splitter);
         }
 
 

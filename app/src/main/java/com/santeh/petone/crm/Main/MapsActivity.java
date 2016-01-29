@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -12,9 +13,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -37,19 +40,21 @@ import com.santeh.petone.crm.Obj.CustInfoObject;
 import com.santeh.petone.crm.R;
 import com.santeh.petone.crm.Utils.FusedLocation;
 import com.santeh.petone.crm.Utils.Helper;
+import com.santeh.petone.crm.Utils.Logging;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
     private FusedLocation fusedLocation;
+    private Marker selectedMarker;
     Activity activity;
     Context context;
 
     TextView txtposition, txtName, txtMaptype, txtExit, txtTop, txtSettings;
-    ImageButton btn_AddMarker, btn_closeAddMarker;
+    ImageButton btn_AddMarker, btn_closeAddMarker, btnChangeMarkerLocation, btnDeleteMarker;
     DrawerLayout drawerLayout;
 
     CircleOptions circleOptions_addLocation;
@@ -61,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     List<CustInfoObject> customerList;
     public static int requestCODE_addMarker = 1;
     Adapter_MapsActivity adapterMapsActivity;
+    boolean isMarkerSelected = false;
+    ViewGroup hiddenPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +92,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
+
+
+
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
+
+
 
         mMap = googleMap;
 
@@ -103,6 +116,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_closeAddMarker.setVisibility(View.GONE);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         lvcustomers = (ListView) findViewById(R.id.lv_map_customers);
+        hiddenPanel = (ViewGroup)findViewById(R.id.ll_bottomedit);
+        btnChangeMarkerLocation = (ImageButton) findViewById(R.id.btn_changeMarkerLocation);
+        btnDeleteMarker = (ImageButton) findViewById(R.id.btn_deleteMarker);
 
         txtTop = (TextView) findViewById(R.id.txtTopTextView);
         txtTop.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +130,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         showSycnState();
+
+
 
         txtExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,7 +272,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_AddMarker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Helper.map.isLocationEnabled(context)){
+                if (Helper.map.isLocationEnabled(context)) {
                     fusedLocation.disconnectFromApiClient();
                     fusedLocation.connectToApiClient();
 
@@ -270,7 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 @Override
                                 public void run() {
 
-                                    if (mapcircle == null || !mapcircle.isVisible()){
+                                    if (mapcircle == null || !mapcircle.isVisible()) {
                                         circleOptions_addLocation = Helper.map.addCircle(activity, center, 1, R.color.skyblue_20,
                                                 R.color.skyblue_20, 1000);
                                         mapcircle = googleMap.addCircle(circleOptions_addLocation);
@@ -286,12 +304,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         @Override
                                         public void onMapLongClick(LatLng latLng) {
 
-                                            Intent intent = new Intent(activity, Activity_Add_ClientInfo.class);
-                                            intent.putExtra("userid", Helper.variables.getGlobalVar_currentUserID(activity)+"");
-                                            intent.putExtra("lat", latLng.latitude);
-                                            intent.putExtra("long", latLng.longitude);
-                                            closerAddingMarker();
-                                            startActivityForResult(intent, requestCODE_addMarker);
+                                            final LatLng touchLocation = latLng;
+                                            LatLng center = fusedLocation.getLastKnowLocation();
+
+                                            float[] results = new float[1];
+                                            Location.distanceBetween(center.latitude, center.longitude,
+                                                    touchLocation.latitude, touchLocation.longitude, results);
+
+                                            if (results[0] > 1000) {
+                                                final Dialog d = Helper.common.dialogThemedOkOnly(activity, "Out of range", "Selection is out of 1km range from your location", "OK", R.color.red);
+                                                d.show();
+
+                                                Button ok = (Button) d.findViewById(R.id.btn_dialog_okonly_OK);
+                                                ok.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        d.hide();
+                                                    }
+                                                });
+                                            } else {
+                                                Intent intent = new Intent(activity, Activity_Add_ClientInfo.class);
+                                                intent.putExtra("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
+                                                intent.putExtra("lat", latLng.latitude);
+                                                intent.putExtra("long", latLng.longitude);
+                                                closerAddingMarker();
+                                                startActivityForResult(intent, requestCODE_addMarker);
+                                            }
 
 
                                         }
@@ -300,14 +338,251 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }, 1400);
                         }
                     }, 200);
-                }else{
-                    Helper.common.toastShort(activity, "Location Service not Available!");}
+                } else {
+                    Helper.common.toastShort(activity, "Location Service not Available!");
+                }
 
             }
         });
 
         showAllMarker(googleMap);
+
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                isMarkerSelected = true;
+                animateBottom();
+
+                selectedMarker = marker;
+
+                String splitter = "~";
+                String[] splitted = selectedMarker.getSnippet().split(splitter);
+
+                if (db.isClientInfoPosted(splitted[0])) {
+                    btnChangeMarkerLocation.setEnabled(false);
+                    btnDeleteMarker.setEnabled(false);
+                }else{
+                    btnChangeMarkerLocation.setEnabled(true);
+                    btnDeleteMarker.setEnabled(true);
+                }
+
+
+                return false;
+            }
+        });
+
+
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                if (isMarkerSelected) {
+                    isMarkerSelected = false;
+                }
+                animateBottom();
+            }
+        });
+
+        btnDeleteMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedMarker != null){
+
+
+                    final Dialog d = Helper.common.dialogThemedYesNO(activity, "Are you sure you want to delete selected marker?" +
+                            "\nNOTE: All updates related to this will also be deleted", "Delete", "NO", "YES", R.color.red_material_600);
+                    Button btnyes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                    Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+
+                    btnyes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            d.hide();
+                            if(db.deleteClientInfoWithUpdatesByInfoID(Helper.random.splitter("~", selectedMarker.getSnippet())[0]) ){
+                                selectedMarker.remove();
+                                isMarkerSelected = false;
+                                Logging.userAction(activity, context, Logging.ACTION_DELETE, Helper.random.splitter("~", selectedMarker.getSnippet())[0],
+                                        DB_Helper_PetOneCRM.TBL_UPDATES, Logging.TYPE_USER);
+                                animateBottom();
+                                showSycnState();
+
+                                Helper.common.toastShort(activity, "Marker was successfully deleted.");
+                            }else{
+                                Helper.common.toastShort(activity, "Delete failed. Please try again.");
+                                animateBottom();
+                            }
+                        }
+                    });
+
+                    btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            d.hide();
+                        }
+                    });
+
+                }
+            }
+        });
+
+        btnChangeMarkerLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedMarker != null) {
+
+                    Helper.common.dialogThemedOkOnly(activity, "Change Location", "Longpress marker until InfoWindow is gone then drag marker to desired location.", "OK", R.color.blue_400);
+                    hiddenPanel.setVisibility(View.GONE);
+
+                    final LatLng[] originalPosition = new LatLng[1];
+
+                    selectedMarker.setDraggable(true);
+                    googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                        @Override
+                        public void onMarkerDragStart(Marker marker) {
+                            hiddenPanel.setVisibility(View.GONE);
+                            marker.hideInfoWindow();
+                            originalPosition[0] = marker.getPosition();
+                        }
+
+                        @Override
+                        public void onMarkerDrag(Marker marker) {
+                            hiddenPanel.setVisibility(View.GONE);
+                            marker.hideInfoWindow();
+                        }
+
+                        @Override
+                        public void onMarkerDragEnd(final Marker marker) {
+                            final Dialog d = Helper.common.dialogThemedYesNO(activity, "Move location of client's marker here?", "Change Location", "NO", "YES", R.color.red_material_600);
+                            Button yes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                            Button no = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+                            d.setCancelable(false);
+                            yes.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    d.hide();
+                                    marker.setDraggable(false);
+                                    selectedMarker.setDraggable(false);
+
+                                    hiddenPanel.setVisibility(View.VISIBLE);
+                                    marker.showInfoWindow();
+                                }
+                            });
+
+                            no.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    marker.setPosition(originalPosition[0]);
+                                    d.hide();
+                                }
+                            });
+
+
+                        }
+                    });
+
+//                    final LatLng center = fusedLocation.getLastKnowLocation();
+//                    Helper.map.moveCameraAnimate(googleMap, center, 19);
+//
+//                    final Handler handler1 = new Handler();
+//                    handler1.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            if (mapcircle == null || !mapcircle.isVisible()) {
+//                                circleOptions_addLocation = Helper.map.addCircle(activity, center, 1, R.color.skyblue_20,
+//                                        R.color.skyblue_20, 1000);
+//                                mapcircle = googleMap.addCircle(circleOptions_addLocation);
+//                            }
+//                            btn_closeAddMarker.setVisibility(View.VISIBLE);
+//                            Helper.common.dialogThemedOkOnly(activity, "Add Marker", "Long press any location inside the blue.", "OK", R.color.skyblue_500);
+//
+//                            if (btn_AddMarker.isEnabled()) {
+//                                btn_AddMarker.setEnabled(false);
+//                            }
+//
+//                            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+//                                @Override
+//                                public void onMapLongClick(LatLng latLng) {
+//
+//                                    final LatLng touchLocation = latLng;
+//                                    LatLng center = fusedLocation.getLastKnowLocation();
+//
+//                                    float[] results = new float[1];
+//                                    Location.distanceBetween(center.latitude, center.longitude,
+//                                            touchLocation.latitude, touchLocation.longitude, results);
+//
+//                                    if (results[0] > 1000) {
+//                                        final Dialog d = Helper.common.dialogThemedOkOnly(activity, "Out of range", "Selection is out of 1km range from your location", "OK", R.color.red);
+//                                        d.show();
+//
+//                                        Button ok = (Button) d.findViewById(R.id.btn_dialog_okonly_OK);
+//                                        ok.setOnClickListener(new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View v) {
+//                                                d.hide();
+//                                            }
+//                                        });
+//                                    } else {
+//                                        Intent intent = new Intent(activity, Activity_Add_ClientInfo.class);
+//                                        intent.putExtra("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
+//                                        intent.putExtra("lat", latLng.latitude);
+//                                        intent.putExtra("long", latLng.longitude);
+//                                        closerAddingMarker();
+//                                        startActivityForResult(intent, requestCODE_addMarker);
+//                                    }
+//
+//
+//                                }
+//                            });
+//                        }
+//                    }, 1400);
+
+                }
+            }
+        });
+
+
+
     }
+
+
+
+    private void animateBottom(){
+        Animation animatelayout;
+        String selected;
+        int visibility;
+
+        if (isMarkerSelected){
+            animatelayout  = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
+            animatelayout.setDuration(200);
+            visibility = View.VISIBLE;
+
+            btn_AddMarker.setVisibility(View.GONE);
+
+            hiddenPanel.startAnimation(animatelayout);
+            hiddenPanel.setVisibility(visibility);
+
+        }else{
+            animatelayout  = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
+            animatelayout.setDuration(200);
+
+            visibility = View.GONE;
+            btn_AddMarker.setVisibility(View.VISIBLE);
+
+            if (hiddenPanel.getVisibility() == View.VISIBLE){
+                hiddenPanel.startAnimation(animatelayout);
+                hiddenPanel.setVisibility(visibility);
+            }
+
+        }
+
+
+
+
+
+    }
+
 
     private void showSycnState() {
         int unpostedcount =  db.getNotPosted_ClientInfo(activity).getCount() + db.getNotPosted_Updates(activity).getCount();
@@ -342,7 +617,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String id = cur.getString(cur.getColumnIndex(DB_Helper_PetOneCRM.CL_CLIENTINFO_ID));
 
                 googleMap.setInfoWindowAdapter(new CustomerInfoWindow());
-                Helper.map.addMarker(googleMap, latLng, R.drawable.ic_pet24, clientName, address, id);
+                Marker marks = Helper.map.addMarker(googleMap, latLng, R.drawable.ic_pet24, clientName, address, id);
+
 
 
                 CustInfoObject singleCustomer = new CustInfoObject();
@@ -433,6 +709,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
     class CustomerInfoWindow implements GoogleMap.InfoWindowAdapter {
         private final View myContentsView;
         CustomerInfoWindow() {
@@ -448,6 +725,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             tvSnippet.setText(splitted[1]);
             tvTitle.setText( marker.getTitle());
+
             return myContentsView;
         }
 
