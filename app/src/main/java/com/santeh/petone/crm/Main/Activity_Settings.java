@@ -200,7 +200,6 @@ public class Activity_Settings extends FragmentActivity {
                             try {
                                 output = new FileOutputStream(outFileName);
                             } catch (FileNotFoundException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             }
 

@@ -561,6 +561,7 @@ public class Helper {
     }
 
     public static class activityChooser {
+
         public static void startActivityClearStack(Activity currentActivity, Class nextActivity) {
             Intent intent = new Intent(currentActivity, nextActivity);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

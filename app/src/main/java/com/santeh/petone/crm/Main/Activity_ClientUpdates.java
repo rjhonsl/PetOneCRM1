@@ -190,7 +190,7 @@ public class Activity_ClientUpdates extends FragmentActivity {
                             if (position == 0) {
 
                                 final Dialog d2 = Helper.common.dialogYesNoWithMultiLineEditText(activity, "Input your changes.", updateList.get(position1).getRemarks(), "Updates",
-                                        "CANCEK", "UPDATE", R.color.lightBlue_400);
+                                        "CANCEL", "UPDATE", R.color.lightBlue_400);
                                 Button btnOK = (Button) d2.findViewById(R.id.btn_dialog_yesno_opt2);
                                 Button btnCancel = (Button) d2.findViewById(R.id.btn_dialog_yesno_opt1);
                                 final EditText edtRemarks = (EditText) d2.findViewById(R.id.dialog_edttext);
