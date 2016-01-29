@@ -117,7 +117,7 @@ public class Activity_Settings extends FragmentActivity {
                                             try {
                                                 File sd = Environment.getExternalStorageDirectory();//gets external Directory/address
                                                 if (sd.canWrite()) {
-                                                    String backupDBPath = "/data/data/com.santeh.petone/databases/petone.db";//database internal storage path
+                                                    String backupDBPath = "/data/data/com.santeh.petone.crm/databases/petone.db";//database internal storage path
                                                     File currentDB = new File(backupDBPath);
                                                     File backupDB = new File(m_chosen);
 
@@ -176,6 +176,7 @@ public class Activity_Settings extends FragmentActivity {
                 btnyes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        d.hide();
 
                         if(Helper.random.checkSD(activity)){
                             final String inFileName = "/data/data/com.santeh.petone.crm/databases/petone.db";//current database to be exported
