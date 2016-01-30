@@ -102,8 +102,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
 
-
-
         mMap = googleMap;
 
         btn_AddMarker = (ImageButton) findViewById(R.id.btnAddMarker);
@@ -391,7 +389,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                     final Dialog d = Helper.common.dialogThemedYesNO(activity, "Are you sure you want to delete selected marker?" +
-                            "\nNOTE: All updates related to this will also be deleted", "Delete", "NO", "YES", R.color.red_material_600);
+                            "\n\nNOTE: All updates related to this will also be deleted", "Delete", "NO", "YES", R.color.red_material_600);
                     Button btnyes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
                     Button btnNo = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
 
@@ -430,9 +428,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 if (selectedMarker != null) {
+                    fusedLocation.disconnectFromApiClient();
+                    fusedLocation.connectToApiClient();
 
-                    Helper.common.dialogThemedOkOnly(activity, "Change Location", "Longpress marker until InfoWindow is gone then drag marker to desired location.", "OK", R.color.blue_400);
+                    final LatLng center = fusedLocation.getLastKnowLocation();
+
+                    Helper.common.dialogThemedOkOnly(activity, "Change Location", "Long press marker until InfoWindow is gone then drag marker to desired location. \n\nNOTE: You should not exceed 1000m from your current location.", "OK", R.color.blue_400);
                     hiddenPanel.setVisibility(View.GONE);
+                    if (mapcircle == null || !mapcircle.isVisible()) {
+                        circleOptions_addLocation = Helper.map.addCircle(activity, center, 1, R.color.skyblue_20,
+                                R.color.skyblue_20, 1000);
+                        mapcircle = googleMap.addCircle(circleOptions_addLocation);
+                    }
 
                     final LatLng[] originalPosition = new LatLng[1];
 
@@ -453,90 +460,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         @Override
                         public void onMarkerDragEnd(final Marker marker) {
-                            final Dialog d = Helper.common.dialogThemedYesNO(activity, "Move location of client's marker here?", "Change Location", "NO", "YES", R.color.red_material_600);
-                            Button yes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
-                            Button no = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
-                            d.setCancelable(false);
-                            yes.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    d.hide();
-                                    marker.setDraggable(false);
-                                    selectedMarker.setDraggable(false);
+                            closerAddingMarker();
+                            if (Helper.map.getDifference(center, marker.getPosition()) > 1000) {
+                                Helper.common.dialogThemedOkOnly(activity, "Warning", "You can't place marker 1000m away from your current location", "OK", R.color.skyblue_400);
+                                marker.setPosition(originalPosition[0]);
+                                marker.showInfoWindow();
+                            }else{
+                                final Dialog d = Helper.common.dialogThemedYesNO(activity, "Move location of client's marker here?", "Change Location", "NO", "YES", R.color.red_material_600);
+                                Button yes = (Button) d.findViewById(R.id.btn_dialog_yesno_opt2);
+                                Button no = (Button) d.findViewById(R.id.btn_dialog_yesno_opt1);
+                                d.setCancelable(false);
+                                yes.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        d.hide();
+                                        marker.setDraggable(false);
+                                        selectedMarker.setDraggable(false);
 
-                                    hiddenPanel.setVisibility(View.VISIBLE);
-                                    marker.showInfoWindow();
-                                }
-                            });
+                                        hiddenPanel.setVisibility(View.VISIBLE);
+                                        marker.showInfoWindow();
+                                    }
+                                });
 
-                            no.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    marker.setPosition(originalPosition[0]);
-                                    d.hide();
-                                }
-                            });
+                                no.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        marker.setPosition(originalPosition[0]);
+                                        d.hide();
+                                        marker.showInfoWindow();
+                                    }
+                                });
+                            }
+
 
 
                         }
                     });
-
-//                    final LatLng center = fusedLocation.getLastKnowLocation();
-//                    Helper.map.moveCameraAnimate(googleMap, center, 19);
-//
-//                    final Handler handler1 = new Handler();
-//                    handler1.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            if (mapcircle == null || !mapcircle.isVisible()) {
-//                                circleOptions_addLocation = Helper.map.addCircle(activity, center, 1, R.color.skyblue_20,
-//                                        R.color.skyblue_20, 1000);
-//                                mapcircle = googleMap.addCircle(circleOptions_addLocation);
-//                            }
-//                            btn_closeAddMarker.setVisibility(View.VISIBLE);
-//                            Helper.common.dialogThemedOkOnly(activity, "Add Marker", "Long press any location inside the blue.", "OK", R.color.skyblue_500);
-//
-//                            if (btn_AddMarker.isEnabled()) {
-//                                btn_AddMarker.setEnabled(false);
-//                            }
-//
-//                            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-//                                @Override
-//                                public void onMapLongClick(LatLng latLng) {
-//
-//                                    final LatLng touchLocation = latLng;
-//                                    LatLng center = fusedLocation.getLastKnowLocation();
-//
-//                                    float[] results = new float[1];
-//                                    Location.distanceBetween(center.latitude, center.longitude,
-//                                            touchLocation.latitude, touchLocation.longitude, results);
-//
-//                                    if (results[0] > 1000) {
-//                                        final Dialog d = Helper.common.dialogThemedOkOnly(activity, "Out of range", "Selection is out of 1km range from your location", "OK", R.color.red);
-//                                        d.show();
-//
-//                                        Button ok = (Button) d.findViewById(R.id.btn_dialog_okonly_OK);
-//                                        ok.setOnClickListener(new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View v) {
-//                                                d.hide();
-//                                            }
-//                                        });
-//                                    } else {
-//                                        Intent intent = new Intent(activity, Activity_Add_ClientInfo.class);
-//                                        intent.putExtra("userid", Helper.variables.getGlobalVar_currentUserID(activity) + "");
-//                                        intent.putExtra("lat", latLng.latitude);
-//                                        intent.putExtra("long", latLng.longitude);
-//                                        closerAddingMarker();
-//                                        startActivityForResult(intent, requestCODE_addMarker);
-//                                    }
-//
-//
-//                                }
-//                            });
-//                        }
-//                    }, 1400);
 
                 }
             }
@@ -576,9 +535,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
         }
-
-
-
 
 
     }

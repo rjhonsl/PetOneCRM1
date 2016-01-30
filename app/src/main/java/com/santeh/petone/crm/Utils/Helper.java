@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -230,6 +231,15 @@ public class Helper {
     public static class map {
 
 
+        public static float getDifference(LatLng center, LatLng touchLocation ){
+
+            float[] results = new float[1];
+            Location.distanceBetween(center.latitude, center.longitude,
+                    touchLocation.latitude, touchLocation.longitude, results);
+            return results[0];
+        }
+
+
         public static Marker addMarker(GoogleMap map, LatLng latlng, int iconResID,
                                        final String clientName, String address, String id){
 
@@ -243,7 +253,6 @@ public class Helper {
             );
             return marker;
         }
-
 
         public  static boolean isLocationEnabled(Context context) {
             int locationMode = 0;
